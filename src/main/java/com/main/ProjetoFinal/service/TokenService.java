@@ -31,10 +31,10 @@ public class TokenService {
 
     
     // Método responsável por gerar a chave criptográfica.
-    public SecretKey getKeySign() {
+    public SecretKey getSignKey() {
 
         // Decodifica a chave secreta Base64 para bytes.
-        byte[] keyBytes = Decoders.BASE64.decode(this.secret);
+        byte[] keyBytes = Decoder.BASE64.decode(this.secret);
 
         // Cria a chave HMAC usada para assinar o token.
         return Keys.hmacShaKeyFor(keyBytes);
@@ -43,17 +43,11 @@ public class TokenService {
     
     public String gerarToken (ClienteDTO cliente){
 
-        if(
-                
-           (cliente.getId() == 0 || cliente.getId() == null) || cliente.getNome().equals("") || cliente.getEmail().equals("")){
-
+        if((cliente.getId() == 0 || cliente.getId() == null) || cliente.getNome().equals("") || cliente.getEmail().equals("")){
             throw new ResponseStatusException(
-                HttpStatusCode.valueOf(400),
-                "Um ou mais campos faltantes"
-            );
+            HttpStatusCode.valueOf(400),"Um ou mais campos faltantes");
         }
 
-        
         // Cria e retorna o token JWT.
         return Jwts.builder()
 
@@ -63,9 +57,9 @@ public class TokenService {
 
                 // Adiciona um dado extra no token.
                 // Aqui está salvando o usuário inteiro.
-                .claim("nome", user.getNome())
+                .claim("nome", cliente.getNome())
 
-                .claim("role", user.getRole())
+                .claim("role", cliente.getRole())
                 
                 // Define data de criação do token.
                 .issuedAt(new Date())
@@ -82,7 +76,7 @@ public class TokenService {
                 .compact();
     }
     
-    public UserDTO extrairClaims(String token){
+    public ClienteDTO extrairClaims(String token){
         Claims claims = Jwts.parser()
                 .verifyWith(this.getKeySign())                
                 .build()
@@ -90,7 +84,7 @@ public class TokenService {
                 .getPayload();
         
         //Recupera o usuário do claim "usuario"
-        UserDTO user = new UserDTO();
+        ClienteDTO user = new ClienteDTO();
         user.setId(claims.get("id", Long.class));
         user.setNome(claims.get("nome", String.class));
         user.setRole(claims.get("role", String.class));
