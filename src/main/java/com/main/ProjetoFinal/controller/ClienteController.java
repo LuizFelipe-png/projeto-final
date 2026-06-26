@@ -28,4 +28,9 @@ public class ClienteController {
         service.cadastrar(cliente);
         return "Cadastro feito com sucesso!";
     }
+    
+    @PostMapping("/logar")
+    public String login(@RequestBody ClienteDTO cliente){
+        return service.logar(cliente);
+    }
 }

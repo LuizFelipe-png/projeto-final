@@ -59,7 +59,7 @@ public class ClienteRepository {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                cliente.setId(rs.getInt("id"));
+                cliente.setId(rs.getLong("id"));
                 cliente.setEmail(rs.getString("email"));
                 cliente.setNome(rs.getString("nome"));
 

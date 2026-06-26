@@ -21,6 +21,9 @@ public class ClienteService {
     @Autowired
     private ClienteRepository repository;
     
+    @Autowired
+    private TokenService tokenService;
+    
     public void cadastrar(ClienteDTO cliente){
         String mensagem = "";
         if(cliente.getNome().equals("")){

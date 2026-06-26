@@ -10,7 +10,7 @@ package com.main.ProjetoFinal.model;
  */
 public class ClienteDTO {
     
-    private int id;
+    private Long id;
     private String nome;
     private String usuario;
     private String email;
@@ -20,7 +20,7 @@ public class ClienteDTO {
     public ClienteDTO() {
     }
 
-    public ClienteDTO(int id, String nome, String usuario, String email, String telefone, String senha) {
+    public ClienteDTO(Long id, String nome, String usuario, String email, String telefone, String senha) {
         this.id = id;
         this.nome = nome;
         this.usuario = usuario;
@@ -29,11 +29,11 @@ public class ClienteDTO {
         this.senha = senha;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
