@@ -1,36 +1,37 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.main.ProjetoFinal.controller;
 
-import com.main.ProjetoFinal.model.ClienteDTO;
-import com.main.ProjetoFinal.service.ClienteService;
+import com.main.ProjetoFinal.model.UsuarioDTO;
+import com.main.ProjetoFinal.model.UsuarioRequestDTO;
+import com.main.ProjetoFinal.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-/**
- *
- * @author Aluno
- */
-@Controller
+@RestController 
 @RequestMapping("/api/auth")
-public class ClienteController {
+public class UsuarioController {
     
     @Autowired
-    private ClienteService service;
+    private UsuarioService service;
     
     @PostMapping("/cadastrar")
-    public String cadastrar (@RequestBody ClienteDTO cliente){
+    public ResponseEntity<String> cadastrar(@RequestBody UsuarioDTO cliente){
         service.cadastrar(cliente);
-        return "Cadastro feito com sucesso!";
+        return ResponseEntity.status(HttpStatus.CREATED).body("Cadastro feito com sucesso!");
     }
     
     @PostMapping("/logar")
-    public String login(@RequestBody ClienteDTO cliente){
+    public String login(@RequestBody UsuarioRequestDTO cliente){
         return service.logar(cliente);
+    }
+    
+    @GetMapping("/home")
+    public String home(){
+        return "home";
     }
 }

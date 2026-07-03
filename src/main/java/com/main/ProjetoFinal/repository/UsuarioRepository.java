@@ -4,7 +4,7 @@
  */
 package com.main.ProjetoFinal.repository;
 
-import com.main.ProjetoFinal.model.ClienteDTO;
+import com.main.ProjetoFinal.model.UsuarioDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,59 +17,56 @@ import org.springframework.stereotype.Repository;
  * @author Aluno
  */
 @Repository
-public class ClienteRepository {
-    
-     public int cadastrar(ClienteDTO cliente) {
-        try{
-            Connection conn = Conexao.conectar();
-            PreparedStatement stmt = null;
-            ResultSet rs = null;
-            
-            stmt = conn.prepareStatement("INSERT INTO cliente (nome, nome_usuario, email, telefone, senha) cliente VALUES (?,?,?,?,?)");
-            
-            rs = stmt.executeQuery();
+public class UsuarioRepository {
 
-            stmt.setString(1, cliente.getNome());
-            stmt.setString(2, cliente.getUsuario());
-            stmt.setString(3, cliente.getEmail());
-            stmt.setString(4, cliente.getTelefone());
-            stmt.setString(5, cliente.getSenha());
+        public int cadastrar(UsuarioDTO cliente) {
+            try {
+                Connection conn = Conexao.conectar();
+                PreparedStatement stmt = null;
+
+                stmt = conn.prepareStatement("INSERT INTO cliente (nome, nome_usuario, email, telefone, senha, role) VALUES (?,?,?,?,?,?)");
+
+                stmt.setString(1, cliente.getNome());
+                stmt.setString(2, cliente.getNome_usuario());
+                stmt.setString(3, cliente.getEmail());
+                stmt.setString(4, cliente.getTelefone());
+                stmt.setString(5, cliente.getSenha());
+                stmt.setString(6, cliente.getRole());
+
+                return stmt.executeUpdate();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
+
+        public UsuarioDTO login(String email, String senha) {
+            UsuarioDTO cliente = new UsuarioDTO();
+
+            try {
+                Connection conn = Conexao.conectar();
+                PreparedStatement stmt = null;
+                ResultSet rs = null;
+
+                stmt = conn.prepareStatement("SELECT * FROM cliente WHERE email = ? and senha = ? and role = ?");
+
+                stmt.setString(1, email);
+                stmt.setString(2, senha);
                 
-                return stmt.executeUpdate();          
-            
-        }catch(SQLException e){
-            e.printStackTrace();
-        } 
-        return 0;
-    }
-     
-     public ClienteDTO logar(String email, String senha) {
-        ClienteDTO cliente = new ClienteDTO();
+                rs = stmt.executeQuery();
 
-        try {
-            Connection conn = Conexao.conectar();
-            PreparedStatement stmt = null;
-            ResultSet rs = null;
+                if (rs.next()) {
+                    cliente.setEmail(rs.getString("email"));
+                    cliente.setSenha(rs.getString("senha"));
+                }
 
-            stmt = conn.prepareStatement("SELECT * FROM cliente WHERE email = ? and senha = ?");
-
-            stmt.setString(1, email);
-            stmt.setString(2, senha);
-
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                cliente.setId(rs.getLong("id"));
-                cliente.setEmail(rs.getString("email"));
-                cliente.setNome(rs.getString("nome"));
+            } catch (SQLException e) {
+                e.printStackTrace();
 
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            return cliente;
 
         }
-        return cliente;
-
     }
-}
+

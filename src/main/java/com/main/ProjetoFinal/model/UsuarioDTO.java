@@ -8,25 +8,27 @@ package com.main.ProjetoFinal.model;
  *
  * @author Aluno
  */
-public class ClienteDTO {
+public class UsuarioDTO {
     
     private Long id;
     private String nome;
-    private String usuario;
+    private String nome_usuario;
     private String email;
     private String telefone;
     private String senha;
+    private String role;
 
-    public ClienteDTO() {
+    public UsuarioDTO() {
     }
 
-    public ClienteDTO(Long id, String nome, String usuario, String email, String telefone, String senha) {
+    public UsuarioDTO(Long id, String nome, String nome_usuario, String email, String telefone, String senha, String role) {
         this.id = id;
         this.nome = nome;
-        this.usuario = usuario;
+        this.nome_usuario = nome_usuario;
         this.email = email;
         this.telefone = telefone;
         this.senha = senha;
+        this.role = role;
     }
 
     public Long getId() {
@@ -45,12 +47,12 @@ public class ClienteDTO {
         this.nome = nome;
     }
 
-    public String getUsuario() {
-        return usuario;
+    public String getNome_usuario() {
+        return nome_usuario;
     }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
+    public void setNome_usuario(String nome_usuario) {
+        this.nome_usuario = nome_usuario;
     }
 
     public String getEmail() {
@@ -75,6 +77,14 @@ public class ClienteDTO {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     
