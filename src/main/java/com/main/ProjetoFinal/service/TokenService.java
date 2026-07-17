@@ -26,7 +26,7 @@ public class TokenService {
 
     public String gerarToken (UsuarioDTO cliente){
 
-        if((cliente.getId() == 0 || cliente.getId() == null) || cliente.getNome().equals("") || cliente.getNome_usuario().equals("") ||cliente.getEmail().equals("") || cliente.getSenha().equals("") || cliente.getRole().equals("")){
+        if((cliente.getId() == 0 || cliente.getId() == null) || cliente.getNome().equals("") || cliente.getEmail().equals("") || cliente.getSenha().equals("") || cliente.getRole().equals("")){
             throw new ResponseStatusException(
             HttpStatusCode.valueOf(400), "Um ou mais campos faltantes");
         }
@@ -34,7 +34,6 @@ public class TokenService {
         return Jwts.builder()
                 .subject(cliente.getNome())
                 .claim("nome", cliente.getNome())
-                .claim("nome_usuario", cliente.getNome_usuario())
                 .claim("email", cliente.getEmail())
                 .claim("telefone", cliente.getTelefone())
                 .claim("senha", cliente.getSenha())
@@ -55,7 +54,6 @@ public class TokenService {
         UsuarioDTO user = new UsuarioDTO();
         user.setId(claims.get("id", Long.class));
         user.setNome(claims.get("nome", String.class));
-        user.setNome_usuario(claims.get("usuario", String.class));
         user.setEmail(claims.get("email", String.class));
         user.setTelefone(claims.get("telefone", String.class));
         user.setSenha(claims.get("senha", String.class));

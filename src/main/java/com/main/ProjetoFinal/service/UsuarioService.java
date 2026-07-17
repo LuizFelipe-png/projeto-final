@@ -30,9 +30,6 @@ public class UsuarioService {
         if (cliente.getNome().equals("")) {
             mensagem = "Nome não preenchido!";
         }
-        if (cliente.getNome_usuario().equals("")) {
-            mensagem = "Usuario não preenchido!";
-        }
         if (cliente.getEmail().equals("")) {
             mensagem = "Email não preenchido!";
         }
@@ -48,23 +45,20 @@ public class UsuarioService {
         if (!mensagem.equals("")) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), mensagem);
         }
-
         repository.cadastrar(cliente);
     }
 
-    public String logar(UsuarioRequestDTO cliente) {
+    public UsuarioDTO logar(UsuarioDTO cliente) {
         String mensagem = "";
         if (cliente.getEmail().equals("")) {
             mensagem = "Email não preenchido!";
         } else if (cliente.getSenha().equals("")) {
             mensagem = "Senha não preenchida!";
         }
-
         if (!mensagem.equals("")) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), mensagem);
         }
 
-        UsuarioDTO dadosLogado = repository.login(cliente.getEmail(), cliente.getSenha());
-        return tokenService.gerarToken(dadosLogado);
+        return repository.login(cliente.getEmail(), cliente.getSenha());
     }
 }
