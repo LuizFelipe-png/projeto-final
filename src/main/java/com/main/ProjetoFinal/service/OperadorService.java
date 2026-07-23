@@ -39,7 +39,7 @@ public class OperadorService {
                 .uri("/industria/pedidos")
                 .header("Authorization", "Bearer " + token)
                 .body(operador)
-                .retrieve()
+                .retrieve()     
                 .toBodilessEntity();
     }
 }

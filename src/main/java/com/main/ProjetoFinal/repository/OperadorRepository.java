@@ -49,22 +49,39 @@ public class OperadorRepository {
         }
         return listar;
     }
-   
+
    public int cadastrarLote(OperadorDTO operador) {
         try {
             Connection conn = Conexao.conectar();
-            PreparedStatement stmt = null;
 
-            stmt = conn.prepareStatement("INSERT INTO pedidos (nome_pedido, peso, quantidade, status, codigo, id_cliente) VALUES (?,?,?,?,?,?)");
+            int id_cliente = 0;
+            PreparedStatement stmt1 = conn.prepareStatement("SELECT id_cliente FROM cliente WHERE email = ?");
+            stmt1.setString(1, operador.getEmail_cliente());
+            ResultSet rs = stmt1.executeQuery();
+            if (rs.next()) {
+                id_cliente = rs.getInt("id_cliente");
+            } else {
+                PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO cliente (nome, email) VALUES (?,?)");
+                stmt2.setString(1, operador.getNome_cliente());
+                stmt2.setString(2, operador.getEmail_cliente());
+                stmt2.executeUpdate();
+
+                PreparedStatement stmt3 = conn.prepareStatement("SELECT id_cliente FROM cliente WHERE email = ?");
+                stmt3.setString(1, operador.getEmail_cliente());
+                ResultSet rs2 = stmt3.executeQuery();
+                if (rs2.next()) {
+                    id_cliente = rs2.getInt("id_cliente");
+                }
+            }
+
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO pedidos (nome_pedido, peso, quantidade, status, codigo, id_cliente) VALUES (?,?,?,?,?,?)");
             stmt.setString(1, operador.getNome_pedido());
             stmt.setFloat(2, operador.getPeso());
             stmt.setInt(3, operador.getQuantidade());
             stmt.setString(4, operador.getStatus());
             stmt.setString(5, operador.getCodigo());
-            stmt.setInt(6, operador.getId_cliente());
-            
+            stmt.setInt(6, id_cliente);
             return stmt.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }

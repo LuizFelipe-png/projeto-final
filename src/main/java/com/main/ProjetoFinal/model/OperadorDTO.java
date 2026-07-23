@@ -17,11 +17,13 @@ public class OperadorDTO {
     private String status;
     private String codigo;
     private int id_cliente;
+    private String nome_cliente;
+    private String email_cliente;
 
     public OperadorDTO() {
     }
 
-    public OperadorDTO(int id_pedido, String nome_pedido, float peso, int quantidade, String status, String codigo, int id_cliente) {
+    public OperadorDTO(int id_pedido, String nome_pedido, float peso, int quantidade, String status, String codigo, int id_cliente, String nome_cliente, String email_cliente) {
         this.id_pedido = id_pedido;
         this.nome_pedido = nome_pedido;
         this.peso = peso;
@@ -29,6 +31,8 @@ public class OperadorDTO {
         this.status = status;
         this.codigo = codigo;
         this.id_cliente = id_cliente;
+        this.nome_cliente = nome_cliente;
+        this.email_cliente = email_cliente;
     }
 
     public int getId_pedido() {
@@ -87,5 +91,21 @@ public class OperadorDTO {
         this.id_cliente = id_cliente;
     }
 
-    
+    public String getNome_cliente() {
+        return nome_cliente;
+    }
+
+    public void setNome_cliente(String nome_cliente) {
+        this.nome_cliente = nome_cliente;
+    }
+
+    public String getEmail_cliente() {
+        return email_cliente;
+    }
+
+    public void setEmail_cliente(String email_cliente) {
+        this.email_cliente = email_cliente;
+    }
+
+     
 }
