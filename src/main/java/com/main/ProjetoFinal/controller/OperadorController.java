@@ -22,17 +22,16 @@ public class OperadorController {
     @Autowired
     private OperadorService service;
 
-    @GetMapping("/pedidos")
-    public List<OperadorDTO> listarPedidos(@RequestHeader("Authorization") String auth){
+    @PostMapping("/pedidos")
+    public void cadastrarLote(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO operador) {
+
         String token = auth.replace("Bearer ", "");
-        tokenService.extrairClaims(token);
-        return service.listarPedidos(token);
+        service.cadastrarLote(token, operador);
     }
 
-    @PostMapping("/pedidos")
-    public void cadastrarLote(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO operador){
+    @GetMapping("/listar")
+    public List<OperadorDTO> listarPedidos(@RequestHeader("Authorization") String auth) {
         String token = auth.replace("Bearer ", "");
-        tokenService.extrairClaims(token);
-        service.cadastrarLote(token, operador);
+        return service.listarPedidos(token, null);
     }
 }

@@ -42,15 +42,15 @@ public class UsuarioRepository {
 
     public UsuarioDTO login(String email, String senha) {
         UsuarioDTO cliente = null;
-
+        
         try {
             Connection conn = Conexao.conectar();
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM usuario WHERE email = ? and senha = ?");
             stmt.setString(1, email);
             stmt.setString(2, senha);
-
+            
             ResultSet rs = stmt.executeQuery();
-
+            
             if (rs.next()) {
                 cliente = new UsuarioDTO(); 
                 cliente.setId(rs.getLong("id_usuario"));

@@ -19,19 +19,17 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class OperadorRepository {
-    
-   public List<OperadorDTO> listarPedidos(){
-       List<OperadorDTO> listar = new ArrayList<OperadorDTO>();
+
+    public List<OperadorDTO> listarPedidos() {
+        List<OperadorDTO> listar = new ArrayList<OperadorDTO>();
         try {
             Connection conn = Conexao.conectar();
-            PreparedStatement stmt = null;
-            ResultSet rs = null;
+            PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT p.*, c.nome AS nome_cliente FROM pedidos p, cliente c WHERE p.id_cliente = c.id_cliente"
+            );
+            ResultSet rs = stmt.executeQuery();
 
-            stmt = conn.prepareStatement("SELECT * FROM pedidos");
-            
-            rs = stmt.executeQuery();
-            
-            while(rs.next()){
+            while (rs.next()) {
                 OperadorDTO pedidos = new OperadorDTO();
                 pedidos.setId_pedido(rs.getInt("id_pedido"));
                 pedidos.setNome_pedido(rs.getString("nome_pedido"));
@@ -40,17 +38,17 @@ public class OperadorRepository {
                 pedidos.setStatus(rs.getString("status"));
                 pedidos.setCodigo(rs.getString("codigo"));
                 pedidos.setId_cliente(rs.getInt("id_cliente"));
-                
-                listar.add(pedidos); 
+                pedidos.setNome_cliente(rs.getString("nome_cliente"));
+
+                listar.add(pedidos);
             }
         } catch (SQLException e) {
             e.printStackTrace();
-
         }
         return listar;
     }
 
-   public int cadastrarLote(OperadorDTO operador) {
+    public int cadastrarLote(OperadorDTO operador) {
         try {
             Connection conn = Conexao.conectar();
 

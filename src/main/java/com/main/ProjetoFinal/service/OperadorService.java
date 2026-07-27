@@ -5,11 +5,13 @@
 package com.main.ProjetoFinal.service;
 
 import com.main.ProjetoFinal.model.OperadorDTO;
+import com.main.ProjetoFinal.repository.OperadorRepository;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -17,31 +19,28 @@ import java.util.List;
  */
 @Service
 public class OperadorService {
+    
+    @Autowired
+    private OperadorRepository dao;
 
-    private final RestClient restClient;
-
-    public OperadorService() {
-        this.restClient = RestClient.builder()
-                .baseUrl("http://localhost:9000")
-                .build();
-    }
-
-    public List<OperadorDTO> listarPedidos(String token) {
-        return restClient.get()
-                .uri("/industria/pedidos")
-                .header("Authorization", "Bearer " + token)
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<OperadorDTO>>() {});
-    }
+    @Autowired
+    private TokenService tokenService;
 
     public void cadastrarLote(String token, OperadorDTO operador) {
-        restClient.post()
-                .uri("/industria/pedidos")
-                .header("Authorization", "Bearer " + token)
-                .body(operador)
-                .retrieve()     
-                .toBodilessEntity();
+        tokenService.extrairClaims(token);
+        int linhas = dao.cadastrarLote(operador);
+        if (linhas == 0) {
+            throw new RuntimeException("Erro ao cadastrar pedido.");
+        }
     }
+    
+    public List<OperadorDTO> listarPedidos(String token, OperadorDTO operador){
+        tokenService.extrairClaims(token);
+        return dao.listarPedidos();
+
+    }
+    
+    
 }
 
 
