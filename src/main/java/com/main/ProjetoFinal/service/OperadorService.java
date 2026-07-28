@@ -25,6 +25,7 @@ public class OperadorService {
 
     @Autowired
     private TokenService tokenService;
+   
 
     public void cadastrarLote(String token, OperadorDTO operador) {
         tokenService.extrairClaims(token);

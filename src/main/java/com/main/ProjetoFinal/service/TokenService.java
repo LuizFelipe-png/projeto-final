@@ -24,25 +24,23 @@ public class TokenService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String gerarToken (UsuarioDTO cliente){
-
-        if((cliente.getId() == 0 || cliente.getId() == null) || cliente.getNome().equals("") || cliente.getEmail().equals("") || cliente.getSenha().equals("") || cliente.getRole().equals("")){
-            throw new ResponseStatusException(
-            HttpStatusCode.valueOf(400), "Um ou mais campos faltantes");
-        }
-
-        return Jwts.builder()
-                .subject(cliente.getNome())
-                .claim("nome", cliente.getNome())
-                .claim("email", cliente.getEmail())
-                .claim("telefone", cliente.getTelefone())
-                .claim("senha", cliente.getSenha())
-                .claim("role", cliente.getRole())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 3000000))
-                .signWith(this.getSignKey()) 
-                .compact();
+    public String gerarToken(UsuarioDTO cliente){
+    if((cliente.getId() == 0 || cliente.getId() == null) || cliente.getNome().equals("") || cliente.getEmail().equals("") || cliente.getSenha().equals("") || cliente.getRole().equals("")){
+        throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Um ou mais campos faltantes");
     }
+    return Jwts.builder()
+            .subject(cliente.getNome())
+            .claim("id", cliente.getId())
+            .claim("nome", cliente.getNome())
+            .claim("email", cliente.getEmail())
+            .claim("telefone", cliente.getTelefone())
+            .claim("senha", cliente.getSenha())
+            .claim("role", cliente.getRole())
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + 3000000))
+            .signWith(this.getSignKey())
+            .compact();
+}
     
     public UsuarioDTO extrairClaims(String token){
         Claims claims = Jwts.parser()
@@ -65,12 +63,16 @@ public class TokenService {
     public boolean validarToken(String token) {
         try {
             Jwts.parser()
-                    .verifyWith(this.getSignKey()) 
+                    .setSigningKey(getSignKey())
                     .build()
-                    .parseSignedClaims(token);
+                    .parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 }
+
+//.verifyWith(this.getSignKey()) 
+                    //.build()
+                    //.parseSignedClaims(token);
