@@ -34,7 +34,7 @@ public class IncidenteService {
 
         int linhas = repository.cadastrarIncidente(incidente);
         if (linhas == 0) {
-            throw new RuntimeException("Erro ao cadastrar incidente.");
+            throw new RuntimeException("Erro ao cadastrar incidente");
         }
     }
 

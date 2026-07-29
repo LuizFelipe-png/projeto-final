@@ -63,26 +63,19 @@ public class OperadorRepository {
                 stmt2.setString(1, operador.getNome_cliente());
                 stmt2.setString(2, operador.getEmail_cliente());
                 stmt2.executeUpdate();
+              }
 
-                PreparedStatement stmt3 = conn.prepareStatement("SELECT id_cliente FROM cliente WHERE email = ?");
-                stmt3.setString(1, operador.getEmail_cliente());
-                ResultSet rs2 = stmt3.executeQuery();
-                if (rs2.next()) {
-                    id_cliente = rs2.getInt("id_cliente");
-                }
-            }
-
-            PreparedStatement stmt = conn.prepareStatement("INSERT INTO pedidos (nome_pedido, peso, quantidade, status, codigo, id_cliente) VALUES (?,?,?,?,?,?)");
-            stmt.setString(1, operador.getNome_pedido());
-            stmt.setFloat(2, operador.getPeso());
-            stmt.setInt(3, operador.getQuantidade());
-            stmt.setString(4, operador.getStatus());
-            stmt.setString(5, operador.getCodigo());
-            stmt.setInt(6, id_cliente);
-            return stmt.executeUpdate();
+            PreparedStatement stmt3 = conn.prepareStatement("INSERT INTO pedidos (nome_pedido, peso, quantidade, status, codigo, id_cliente) VALUES (?,?,?,?,?,?)");
+            stmt3.setString(1, operador.getNome_pedido());
+            stmt3.setFloat(2, operador.getPeso());
+            stmt3.setInt(3, operador.getQuantidade());
+            stmt3.setString(4, operador.getStatus());
+            stmt3.setString(5, operador.getCodigo());
+            stmt3.setInt(6, id_cliente);
+            return stmt3.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
-}
+    }

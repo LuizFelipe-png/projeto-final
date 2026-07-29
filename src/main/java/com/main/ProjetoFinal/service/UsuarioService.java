@@ -42,9 +42,15 @@ public class UsuarioService {
         if (cliente.getRole() == null || cliente.getRole().equals("")) {
             mensagem = "Role não preenchido!";
         }
+        if(cliente.getSenha().length() < 5 && cliente.getSenha().length() > 20){
+            mensagem = "A senha está passou dos limites de caracteres ou está muito pequena!";
+        }
         if (!mensagem.equals("")) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), mensagem);
         }
+        
+        
+        
         repository.cadastrar(cliente);
     }
 
@@ -58,7 +64,7 @@ public class UsuarioService {
         if (!mensagem.equals("")) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), mensagem);
         }
-
+        
         return repository.login(cliente.getEmail(), cliente.getSenha());
     }
 }

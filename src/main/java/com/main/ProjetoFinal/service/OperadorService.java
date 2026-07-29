@@ -25,10 +25,10 @@ public class OperadorService {
 
     @Autowired
     private TokenService tokenService;
-   
 
     public void cadastrarLote(String token, OperadorDTO operador) {
         tokenService.extrairClaims(token);
+        
         int linhas = dao.cadastrarLote(operador);
         if (linhas == 0) {
             throw new RuntimeException("Erro ao cadastrar pedido.");
