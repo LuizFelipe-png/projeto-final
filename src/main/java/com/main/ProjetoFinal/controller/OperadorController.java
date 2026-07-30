@@ -25,6 +25,7 @@ public class OperadorController {
     @PostMapping("/pedidos")
     public void cadastrarLote(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO operador) {
         String token = auth.replace("Bearer ", "");
+        service.cadastrarLote(token, operador);
     }
 
     @GetMapping("/listar")

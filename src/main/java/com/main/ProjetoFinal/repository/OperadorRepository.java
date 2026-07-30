@@ -1,6 +1,6 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+     * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+     * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.main.ProjetoFinal.repository;
 
@@ -24,9 +24,7 @@ public class OperadorRepository {
         List<OperadorDTO> listar = new ArrayList<OperadorDTO>();
         try {
             Connection conn = Conexao.conectar();
-            PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT p.*, c.nome AS nome_cliente FROM pedidos p, cliente c WHERE p.id_cliente = c.id_cliente"
-            );
+            PreparedStatement stmt = conn.prepareStatement("SELECT p.*, c.nome AS nome_cliente, c.email AS email_cliente " + "FROM pedidos p LEFT JOIN cliente c ON p.id_cliente = c.id_cliente");
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -39,7 +37,10 @@ public class OperadorRepository {
                 pedidos.setCodigo(rs.getString("codigo"));
                 pedidos.setId_cliente(rs.getInt("id_cliente"));
                 pedidos.setNome_cliente(rs.getString("nome_cliente"));
-
+                pedidos.setEmail_cliente(rs.getString("email_cliente"));
+                long idEntregador = rs.getLong("id_entregador");
+                pedidos.setId_entregador(rs.wasNull() ? null : idEntregador);
+                pedidos.setToken(rs.getString("token"));
                 listar.add(pedidos);
             }
         } catch (SQLException e) {
@@ -48,7 +49,7 @@ public class OperadorRepository {
         return listar;
     }
 
-    public int cadastrarLote(OperadorDTO operador) {
+    public int cadastrarLote(OperadorDTO operador, String emailCliente) {
         try {
             Connection conn = Conexao.conectar();
 
@@ -59,11 +60,16 @@ public class OperadorRepository {
             if (rs.next()) {
                 id_cliente = rs.getInt("id_cliente");
             } else {
-                PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO cliente (nome, email) VALUES (?,?)");
+                PreparedStatement stmt2 = conn.prepareStatement("INSERT INTO cliente (nome, email) VALUES (?,?)", java.sql.Statement.RETURN_GENERATED_KEYS);
                 stmt2.setString(1, operador.getNome_cliente());
                 stmt2.setString(2, operador.getEmail_cliente());
                 stmt2.executeUpdate();
-              }
+
+                ResultSet generatedKeys = stmt2.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    id_cliente = generatedKeys.getInt(1);
+                }
+            }
 
             PreparedStatement stmt3 = conn.prepareStatement("INSERT INTO pedidos (nome_pedido, peso, quantidade, status, codigo, id_cliente) VALUES (?,?,?,?,?,?)");
             stmt3.setString(1, operador.getNome_pedido());
@@ -78,4 +84,46 @@ public class OperadorRepository {
         }
         return 0;
     }
+
+    public int despacharLote(int idPedido, Long idEntregador, String token) {
+        try {
+            Connection conn = Conexao.conectar();
+            PreparedStatement stmt = conn.prepareStatement(
+                    "UPDATE pedidos SET status = 'Em Rota', id_entregador = ?, token = ? WHERE id_pedido = ?"
+            );
+            stmt.setLong(1, idEntregador);
+            stmt.setString(2, token);
+            stmt.setInt(3, idPedido);
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
+
+    public OperadorDTO buscarPorId(int idPedido) {
+        try {
+            Connection conn = Conexao.conectar();
+            PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT p.*, c.nome AS nome_cliente, c.email AS email_cliente "
+                    + "FROM pedidos p LEFT JOIN cliente c ON p.id_cliente = c.id_cliente "
+                    + "WHERE p.id_pedido = ?"
+            );
+            stmt.setInt(1, idPedido);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                OperadorDTO pedido = new OperadorDTO();
+                pedido.setId_pedido(rs.getInt("id_pedido"));
+                pedido.setNome_pedido(rs.getString("nome_pedido"));
+                pedido.setStatus(rs.getString("status"));
+                pedido.setCodigo(rs.getString("codigo"));
+                pedido.setNome_cliente(rs.getString("nome_cliente"));
+                pedido.setEmail_cliente(rs.getString("email_cliente"));
+                return pedido;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+}
