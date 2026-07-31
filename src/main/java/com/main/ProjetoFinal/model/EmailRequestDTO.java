@@ -10,52 +10,42 @@ package com.main.ProjetoFinal.model;
  */
 public class EmailRequestDTO {
     
-    private String from;
-    private String to;
-    private String subject;
-    private String html;
+    private String para;
+    private String assunto;
+    private String conteudoHtml;
 
     public EmailRequestDTO() {
     }
 
-    public EmailRequestDTO(String from, String to, String subject, String html) {
-        this.from = from;
-        this.to = to;
-        this.subject = subject;
-        this.html = html;
+    public EmailRequestDTO(String para, String assunto, String conteudoHtml) {
+        this.para = para;
+        this.assunto = assunto;
+        this.conteudoHtml = conteudoHtml;
     }
 
-    public String getFrom() {
-        return from;
+    public String getPara() {
+        return para;
     }
 
-    public void setFrom(String from) {
-        this.from = from;
+    public void setPara(String para) {
+        this.para = para;
     }
 
-    public String getTo() {
-        return to;
+    public String getAssunto() {
+        return assunto;
     }
 
-    public void setTo(String to) {
-        this.to = to;
+    public void setAssunto(String assunto) {
+        this.assunto = assunto;
     }
 
-    public String getSubject() {
-        return subject;
+    public String getConteudoHtml() {
+        return conteudoHtml;
     }
 
-    public void setSubject(String subject) {
-        this.subject = subject;
+    public void setConteudoHtml(String conteudoHtml) {
+        this.conteudoHtml = conteudoHtml;
     }
 
-    public String getHtml() {
-        return html;
-    }
-
-    public void setHtml(String html) {
-        this.html = html;
-    }
-    
     
 }

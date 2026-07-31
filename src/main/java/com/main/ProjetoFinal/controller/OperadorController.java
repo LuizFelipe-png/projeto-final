@@ -25,12 +25,13 @@ public class OperadorController {
     @PostMapping("/pedidos")
     public void cadastrarLote(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO operador) {
         String token = auth.replace("Bearer ", "");
+        System.out.println(token);
         service.cadastrarLote(token, operador);
     }
 
     @GetMapping("/listar")
     public List<OperadorDTO> listarPedidos(@RequestHeader("Authorization") String auth) {
         String token = auth.replace("Bearer ", "");
-        return service.listarPedidos(token, null);
+        return service.listarPedidos(token);
     }
 }

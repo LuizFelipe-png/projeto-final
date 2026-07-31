@@ -27,7 +27,7 @@ public class UsuarioController {
 
     @Autowired
     private OperadorService service;
-    
+
     @Autowired
     private TokenService tokenService;
 
@@ -48,13 +48,15 @@ public class UsuarioController {
     @PostMapping("/cadastrar")
     public String cadastrar(@RequestBody UsuarioDTO cliente) {
         Usuarioservice.cadastrar(cliente);
+        
         return "redirect:/logar";
     }
 
     @GetMapping("/listar")
     public List<OperadorDTO> listarPedidos(@RequestHeader("Authorization") String auth) {
         String token = auth.replace("Bearer ", "");
-        return service.listarPedidos(token, null);
+
+        return service.listarPedidos(token);
     }
 
 }

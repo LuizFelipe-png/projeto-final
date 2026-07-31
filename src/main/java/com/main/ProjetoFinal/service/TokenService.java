@@ -56,7 +56,7 @@ public class TokenService {
         user.setTelefone(claims.get("telefone", String.class));
         user.setSenha(claims.get("senha", String.class));
         user.setRole(claims.get("role", String.class));
-        
+
         return user;
     }
     
@@ -72,7 +72,3 @@ public class TokenService {
         }
     }
 }
-
-//.verifyWith(this.getSignKey()) 
-                    //.build()
-                    //.parseSignedClaims(token);

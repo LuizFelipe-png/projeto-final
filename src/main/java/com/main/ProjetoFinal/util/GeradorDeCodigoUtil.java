@@ -4,6 +4,7 @@
  */
 package com.main.ProjetoFinal.util;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 /**
@@ -11,18 +12,18 @@ import java.util.Random;
  * @author Aluno
  */
 public class GeradorDeCodigoUtil {
-    
-    public static String geradorCodigo(){
-        StringBuilder codigo = new StringBuilder();
-        Random random = new Random();
+
+    private static final SecureRandom random = new SecureRandom();
+
+    public static String geradorCodigo() {
+        StringBuilder codigoRastreio = new StringBuilder();
         String caracteresValidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        
-        for(int i = 0; i < 5; i++){
+
+        for (int i = 0; i < 5; i++) {
             int indiceSorteado = random.nextInt(caracteresValidos.length());
-            char caracteresSorteado = caracteresValidos.charAt(indiceSorteado);
-            codigo.append(caracteresSorteado);
+            char caracterSorteado = caracteresValidos.charAt(indiceSorteado);
+            codigoRastreio.append(caracterSorteado);
         }
-        String codigoFeito = codigo.toString();
-        return codigoFeito;
+        return codigoRastreio.toString();
     }
 }

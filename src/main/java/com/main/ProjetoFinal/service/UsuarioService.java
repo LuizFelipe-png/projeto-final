@@ -49,8 +49,6 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), mensagem);
         }
         
-        
-        
         repository.cadastrar(cliente);
     }
 
