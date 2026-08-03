@@ -10,25 +10,35 @@ package com.main.ProjetoFinal.model;
  */
 public class EntregadorDTO {
     
-    private Long id_entregador;
+    private int id_entregador;
+    private String nome;
     private String veiculo;
     private String placa;
 
     public EntregadorDTO() {
     }
 
-    public EntregadorDTO(Long id_entregador, String veiculo, String placa) {
+    public EntregadorDTO(int id_entregador, String nome, String veiculo, String placa) {
         this.id_entregador = id_entregador;
+        this.nome = nome;
         this.veiculo = veiculo;
         this.placa = placa;
     }
 
-    public Long getId_entregador() {
+    public int getId_entregador() {
         return id_entregador;
     }
 
-    public void setId_entregador(Long id_entregador) {
+    public void setId_entregador(int id_entregador) {
         this.id_entregador = id_entregador;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public String getVeiculo() {
@@ -46,6 +56,6 @@ public class EntregadorDTO {
     public void setPlaca(String placa) {
         this.placa = placa;
     }
-    
+
     
 }

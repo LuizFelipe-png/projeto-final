@@ -18,35 +18,33 @@ public class OperadorService {
     private TokenService tokenService;
 
     @Autowired
-    private EmailService emailService;
+    private EmailServicee emailService;
 
-    /**
-     * Cadastra um novo lote no banco e envia o e-mail de confirmação de recebimento para o cliente.
-     */
     public void cadastrarLote(String token, OperadorDTO operador) {
-        tokenService.extrairClaims(token);
-
-        int linhas = dao.cadastrarLote(operador, operador.getEmail_cliente());
-        if (linhas == 0) {
-            throw new RuntimeException("Erro ao cadastrar pedido.");
-        }
-
-        if (operador.getEmail_cliente() != null && !operador.getEmail_cliente().isBlank()) {
-            try {
-                String htmlCadastro = "<h2>Olá, " + operador.getNome_cliente() + "!</h2>"
-                        + "<p>Seu pedido de <b>" + operador.getNome_pedido() + "</b> foi recebido pela nossa indústria.</p>"
-                        + "<p>Código do lote: <b>" + operador.getCodigo() + "</b></p>";
-
-                emailService.enviarEmailSmtp(
-                        operador.getEmail_cliente(), 
-                        "Pedido Recebido — Lote " + operador.getCodigo(), 
-                        htmlCadastro
-                );
-            } catch (Exception e) {
-                System.err.println("Erro ao enviar e-mail de cadastro: " + e.getMessage());
-            }
+    tokenService.extrairClaims(token);
+    
+    String codigoGerado = GeradorDeCodigoUtil.geradorCodigo();
+    operador.setCodigo(codigoGerado);
+    
+    int linhas = dao.cadastrarLote(operador, operador.getEmail_cliente());
+    if (linhas == 0) {
+        throw new RuntimeException("Erro ao cadastrar pedido.");
+    }
+    if (operador.getEmail_cliente() != null && !operador.getEmail_cliente().isBlank()) {
+        try {
+            String htmlCadastro = "<h2>Olá, " + operador.getNome_cliente() + "!</h2>"
+                    + "<p>Seu pedido de <b>" + operador.getNome_pedido() + "</b> foi recebido pela nossa indústria.</p>"
+                    + "<p>Código do lote: <b>" + codigoGerado + "</b></p>";
+            emailService.enviarEmailSmtp(
+                    operador.getEmail_cliente(),
+                    "Pedido Recebido — Lote " + codigoGerado,
+                    htmlCadastro
+            );
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar e-mail de cadastro: " + e.getMessage());
         }
     }
+}
 
     /**
      * Lista todos os pedidos cadastrados na base de dados.

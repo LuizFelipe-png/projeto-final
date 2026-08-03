@@ -4,6 +4,8 @@
  */
 package com.main.ProjetoFinal.controller;
 
+import com.main.ProjetoFinal.model.EntregadorDTO;
+import com.main.ProjetoFinal.model.HistoricoDTO;
 import com.main.ProjetoFinal.model.OperadorDTO;
 import com.main.ProjetoFinal.model.UsuarioDTO;
 import com.main.ProjetoFinal.service.EntregadorService;
@@ -11,24 +13,15 @@ import com.main.ProjetoFinal.service.TokenService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-/**
- *
- * @author Aluno
- */
+
 @RestController
 @RequestMapping("/entregador")
 public class EntregadorController {
 
     @Autowired
     private TokenService tokenService;
-
     @Autowired
     private EntregadorService service;
 
@@ -47,5 +40,29 @@ public class EntregadorController {
         if (!sucesso) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Token inválido.");
         }
+    }
+
+    @PostMapping("/checkpoint")
+    public void registrarCheckpoint(@RequestHeader("Authorization") String auth, @RequestBody HistoricoDTO checkpoint) {
+        String token = auth.replace("Bearer ", "");
+        tokenService.extrairClaims(token);
+        boolean sucesso = service.registrarCheckpoint(checkpoint.getId_pedido(), checkpoint.getDescricao());
+        if (!sucesso) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Erro ao registrar checkpoint.");
+        }
+    }
+
+    @GetMapping("/historico/{idPedido}")
+    public List<HistoricoDTO> listarHistorico(@RequestHeader("Authorization") String auth, @PathVariable int idPedido) {
+        String token = auth.replace("Bearer ", "");
+        tokenService.extrairClaims(token);
+        return service.listarHistorico(idPedido);
+    }
+
+    @GetMapping("/listar")
+    public List<EntregadorDTO> listarEntregadores(@RequestHeader("Authorization") String auth) {
+        String token = auth.replace("Bearer ", "");
+        tokenService.extrairClaims(token);
+        return service.listarEntregadores();
     }
 }
