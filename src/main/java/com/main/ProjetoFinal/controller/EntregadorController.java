@@ -4,7 +4,6 @@
  */
 package com.main.ProjetoFinal.controller;
 
-import com.main.ProjetoFinal.model.EntregadorDTO;
 import com.main.ProjetoFinal.model.HistoricoDTO;
 import com.main.ProjetoFinal.model.OperadorDTO;
 import com.main.ProjetoFinal.model.UsuarioDTO;
@@ -60,7 +59,7 @@ public class EntregadorController {
     }
 
     @GetMapping("/listar")
-    public List<EntregadorDTO> listarEntregadores(@RequestHeader("Authorization") String auth) {
+    public List<UsuarioDTO> listarEntregadores(@RequestHeader("Authorization") String auth) {
         String token = auth.replace("Bearer ", "");
         tokenService.extrairClaims(token);
         return service.listarEntregadores();

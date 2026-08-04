@@ -1,12 +1,16 @@
 package com.main.ProjetoFinal.service;
 
 import com.main.ProjetoFinal.model.OperadorDTO;
+import com.main.ProjetoFinal.model.UsuarioDTO;
 import com.main.ProjetoFinal.repository.OperadorRepository;
+import com.main.ProjetoFinal.repository.UsuarioRepository;
 import com.main.ProjetoFinal.util.GeradorDeCodigoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class OperadorService {
@@ -19,6 +23,9 @@ public class OperadorService {
 
     @Autowired
     private EmailServicee emailService;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     public void cadastrarLote(String token, OperadorDTO operador) {
     tokenService.extrairClaims(token);
@@ -73,7 +80,7 @@ public class OperadorService {
             try {
                 String htmlDespacho = "<h2>Seu pedido está a caminho!</h2>"
                         + "<p>Olá, " + pedido.getNome_cliente() + "!</p>"
-                        + "<p>Seu pedido de código <b>" + pedido.getCodigo() + "</b> saiu para entrega.</p>"
+                        + "</b> o seu pedido saiu para entrega</p>"
                         + "<p>Quando o entregador chegar, informe este token de segurança para validar o recebimento: <strong>" 
                         + tokenEntrega + "</strong></p>";
 
@@ -86,5 +93,33 @@ public class OperadorService {
                 System.err.println("Erro ao enviar e-mail de despacho: " + e.getMessage());
             }
         }
+    }
+    
+    public OperadorDTO atribuirEntregador(Integer idEncomenda, Integer idEntregador) {
+        if (idEncomenda == null) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Encomenda inválida, tente novamente!");
+        }
+        if (idEntregador == null) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Entregador inválido, tente novamente!");
+        }
+        UsuarioDTO entregador = usuarioRepository.buscarIdUsuario(idEntregador);
+        if (!entregador.getRole().equals("ENTREGADOR")) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Esse id não é de um entregador, tente novamente!");
+        }
+
+        return dao.atribuirEncomenda(idEncomenda, idEntregador);
+    }
+    
+    public List<OperadorDTO> buscarEncomendaPorEntregador(Integer idEntregador) {
+        if (idEntregador == null) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Entregador inválido, tente novamente!");
+        }
+        UsuarioDTO entregador = usuarioRepository.buscarIdUsuario(idEntregador);
+        if (!entregador.getRole().equals("ENTREGADOR")) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Esse id não é de um entregador, tente novamente!");
+        }
+
+        List<OperadorDTO> encomenda = dao.buscarPedidosPorEntregador(idEntregador);
+        return encomenda;
     }
 }

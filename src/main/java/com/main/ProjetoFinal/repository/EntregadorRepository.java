@@ -4,7 +4,6 @@
  */
 package com.main.ProjetoFinal.repository;
 
-import com.main.ProjetoFinal.model.EntregadorDTO;
 import com.main.ProjetoFinal.model.HistoricoDTO;
 import com.main.ProjetoFinal.model.OperadorDTO;
 import com.main.ProjetoFinal.model.UsuarioDTO;
@@ -129,26 +128,26 @@ public class EntregadorRepository {
         return lista;
     }
 
-    public List<EntregadorDTO> listarEntregadores() {
-        List<EntregadorDTO> lista = new ArrayList<>();
-        String sql = "SELECT e.id_entregador, u.nome, e.veiculo, e.placa "
-                   + "FROM entregador e JOIN usuario u ON e.id_entregador = u.id_usuario";
-
-        try (Connection conn = Conexao.conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                lista.add(new EntregadorDTO(
-                        rs.getInt("id_entregador"),
-                        rs.getString("nome"),
-                        rs.getString("veiculo"),
-                        rs.getString("placa")
-                ));
+    public List<UsuarioDTO> listarEntregadores() {
+        List<UsuarioDTO> lista = new ArrayList();
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement("select * from tb_usuario where role = ?");) {
+            stmt.setString(1, "ENTREGADOR");
+            try (ResultSet rs = stmt.executeQuery();) {
+                while (rs.next()) {
+                    UsuarioDTO user = new UsuarioDTO();
+                    user.setId(rs.getLong("id_usuario"));
+                    user.setNome(rs.getString("nome"));
+                    user.setEmail(rs.getString("email"));
+                    user.setTelefone(rs.getString("telefone"));
+                    user.setSenha(rs.getString("senha"));
+                    user.setRole(rs.getString("role"));
+                    lista.add(user);
+                }
+                return lista;
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            return null;
         }
-        return lista;
     }
 }

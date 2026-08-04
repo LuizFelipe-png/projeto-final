@@ -11,7 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -76,13 +78,12 @@ public class OperadorRepository {
             }
 
             try (PreparedStatement stmt3 = conn.prepareStatement(
-                    "INSERT INTO pedidos (nome_pedido, peso, quantidade, status, codigo, id_cliente) VALUES (?,?,?,?,?,?)")) {
+                    "INSERT INTO pedidos (nome_pedido, peso, quantidade, status, id_cliente) VALUES (?,?,?,?,?)")) {
                 stmt3.setString(1, operador.getNome_pedido());
                 stmt3.setFloat(2, operador.getPeso());
                 stmt3.setInt(3, operador.getQuantidade());
                 stmt3.setString(4, operador.getStatus());
-                stmt3.setString(5, operador.getCodigo());
-                stmt3.setInt(6, id_cliente);
+                stmt3.setInt(5, id_cliente);
                 return stmt3.executeUpdate();
             }
 
@@ -109,9 +110,7 @@ public class OperadorRepository {
     }
 
     public OperadorDTO buscarPorId(int idPedido) {
-        String sql = "SELECT p.*, c.nome AS nome_cliente, c.email AS email_cliente "
-                + "FROM pedidos p LEFT JOIN cliente c ON p.id_cliente = c.id_cliente "
-                + "WHERE p.id_pedido = ?";
+        String sql = "SELECT * FROM pedidos WHERE id_usuario = ?";
 
         try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -133,5 +132,46 @@ public class OperadorRepository {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public OperadorDTO atribuirEncomenda(Integer Id_Pedido, Integer Id_Entregador){
+        try(Connection conn = Conexao.conectar();
+            PreparedStatement stmt = conn.prepareStatement("update pedidos set id_entregador = ? where id_pedido")){
+            stmt.setInt(1, Id_Entregador);
+            stmt.setInt(2, Id_Pedido);
+            int linhasAfetadas = stmt.executeUpdate();
+            if(linhasAfetadas == 0){
+                throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Erro ao alterar o dado, tente novamente!");
+            }
+            OperadorDTO encomendaAtual = buscarPorId(Id_Pedido);
+            return encomendaAtual;
+        } catch(SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public List<OperadorDTO> buscarPedidosPorEntregador(Integer idEntregador) {
+        List<OperadorDTO> lista = new ArrayList();
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement("select * from tb_encomenda where entregador_id = ?");) {
+            stmt.setInt(1, idEntregador);
+            try (ResultSet rs = stmt.executeQuery();) {
+                while (rs.next()) {
+                    OperadorDTO encomenda = new OperadorDTO();
+                    encomenda.setId_pedido(rs.getInt("id"));
+                    encomenda.setCodigo(rs.getString("codigo"));
+                    encomenda.setStatus(rs.getString("status"));
+                    encomenda.setCodigo_pin(rs.getString("codigo_pin"));
+                    encomenda.setTentativas_pin(rs.getInt("tentativas_pin"));
+                    encomenda.setEmailCliente(rs.getString("email_cliente"));
+                    encomenda.setId_entregador((Long) rs.getObject("entregador_id"));
+                    lista.add(encomenda);
+                }
+                return lista;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

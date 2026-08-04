@@ -4,6 +4,7 @@
  */
 package com.main.ProjetoFinal.repository;
 
+import com.main.ProjetoFinal.model.OperadorDTO;
 import com.main.ProjetoFinal.model.UsuarioDTO;
 import com.main.ProjetoFinal.model.UsuarioRequestDTO;
 import java.sql.Connection;
@@ -58,6 +59,26 @@ public class UsuarioRepository {
                 cliente.setNome(rs.getString("nome"));  
                 cliente.setSenha(rs.getString("senha"));
                 cliente.setRole(rs.getString("role"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cliente;
+    }
+    
+    public UsuarioDTO buscarIdUsuario(Integer id) {
+        UsuarioDTO cliente = null;
+        
+        try {
+            Connection conn = Conexao.conectar();
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM usuario WHERE id_usuario = ?");
+            stmt.setLong(1, id);
+            
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                cliente = new UsuarioDTO(); 
+                cliente.setId(rs.getLong("id_usuario"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

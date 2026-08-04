@@ -34,4 +34,7 @@ public class OperadorController {
         String token = auth.replace("Bearer ", "");
         return service.listarPedidos(token);
     }
-}
+    
+    
+    }
+
