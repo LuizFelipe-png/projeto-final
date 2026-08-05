@@ -122,4 +122,14 @@ public class OperadorService {
         List<OperadorDTO> encomenda = dao.buscarPedidosPorEntregador(idEntregador);
         return encomenda;
     }
+    
+    public List<OperadorDTO> listarPedidosPendentes() {
+        // Ele vai no repositório buscar os pedidos que ainda não têm entregador
+        return dao.listarPedidosPendentes(); 
+    }
+
+    // Aproveitando, adicione também o método que vai salvar a vinculação no banco!
+    public void vincularEntregador(int idPedido, int idEntregador) {
+        dao.vincularEntregador(idPedido, idEntregador);
+    }
 }

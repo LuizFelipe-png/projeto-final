@@ -1,10 +1,13 @@
 package com.main.ProjetoFinal.controller;
 
 import com.main.ProjetoFinal.model.OperadorDTO;
+import com.main.ProjetoFinal.repository.OperadorRepository;
+import com.main.ProjetoFinal.service.EntregadorService;
 import com.main.ProjetoFinal.service.OperadorService;
 import com.main.ProjetoFinal.service.TokenService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +24,9 @@ public class OperadorController {
 
     @Autowired
     private OperadorService service;
+    
+    @Autowired
+    private EntregadorService entregadorService;
 
     @PostMapping("/pedidos")
     public void cadastrarLote(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO operador) {
@@ -34,7 +40,13 @@ public class OperadorController {
         String token = auth.replace("Bearer ", "");
         return service.listarPedidos(token);
     }
-    
-    
+
+    // Cole dentro de qualquer @Controller que você já tem aberto no projeto
+    @GetMapping("/atribuir-carga")
+    public String carregarTelaAtribuirCarga(Model model) {
+        model.addAttribute("listaPedidos", service.listarPedidosPendentes());
+        model.addAttribute("listaEntregadores", entregadorService.listarEntregadores());
+        return "atribuir-carga"; // Nome do seu HTML
     }
 
+}

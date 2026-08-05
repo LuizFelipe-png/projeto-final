@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/entregador")
+@RequestMapping("/api/auth")
 public class EntregadorController {
 
     @Autowired
@@ -58,7 +58,7 @@ public class EntregadorController {
         return service.listarHistorico(idPedido);
     }
 
-    @GetMapping("/listar")
+    @GetMapping("/listar-entregadores")
     public List<UsuarioDTO> listarEntregadores(@RequestHeader("Authorization") String auth) {
         String token = auth.replace("Bearer ", "");
         tokenService.extrairClaims(token);
