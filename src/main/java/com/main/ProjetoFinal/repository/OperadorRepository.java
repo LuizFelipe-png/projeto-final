@@ -185,10 +185,7 @@ public class OperadorRepository {
     
     public List<OperadorDTO> listarPedidosPendentes() {
         List<OperadorDTO> lista = new ArrayList<>();
-        String sql = "SELECT p.*, c.nome AS nome_cliente, c.email AS email_cliente "
-                   + "FROM pedidos p "
-                   + "LEFT JOIN cliente c ON p.id_cliente = c.id_cliente "
-                   + "WHERE p.id_entregador IS NULL";
+        String sql = "SELECT * FROM pedidos WHERE id_entregador is null";
 
         try (Connection conn = Conexao.conectar(); 
              PreparedStatement stmt = conn.prepareStatement(sql); 

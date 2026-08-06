@@ -16,7 +16,9 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  *
@@ -149,5 +151,27 @@ public class EntregadorRepository {
             e.printStackTrace();
             return null;
         }
+    }
+    
+    public UsuarioDTO buscarEntregadorPorId(Integer id_Usuario){
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement("select * from usuario where id_usuario = ?");) {
+            stmt.setInt(1, id_Usuario);
+            try (ResultSet rs = stmt.executeQuery();) {
+                while (rs.next()) {
+                    UsuarioDTO user = new UsuarioDTO();
+                    user.setId(rs.getLong("id_usuario"));
+                    user.setNome(rs.getString("nome"));
+                    user.setEmail(rs.getString("email"));
+                    user.setTelefone(rs.getString("telefone"));
+                    user.setSenha(rs.getString("senha"));
+                    user.setRole(rs.getString("role"));
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Usuário não encontrado!");
     }
 }

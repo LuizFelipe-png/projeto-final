@@ -10,10 +10,13 @@ import com.main.ProjetoFinal.model.UsuarioDTO;
 import com.main.ProjetoFinal.repository.EntregadorRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class EntregadorService {
+    
     @Autowired
     private EntregadorRepository repository;
 
@@ -36,4 +39,6 @@ public class EntregadorService {
     public List<UsuarioDTO> listarEntregadores() {
         return repository.listarEntregadores();
     }
+    
+    
 }

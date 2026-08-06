@@ -95,6 +95,7 @@ public class OperadorService {
         }
     }
     
+    
     public OperadorDTO atribuirEntregador(Integer idEncomenda, Integer idEntregador) {
         if (idEncomenda == null) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Encomenda inválida, tente novamente!");
@@ -109,6 +110,7 @@ public class OperadorService {
 
         return dao.atribuirEncomenda(idEncomenda, idEntregador);
     }
+    
     
     public List<OperadorDTO> buscarEncomendaPorEntregador(Integer idEntregador) {
         if (idEntregador == null) {

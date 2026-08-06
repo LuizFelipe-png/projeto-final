@@ -1,5 +1,6 @@
 package com.main.ProjetoFinal.controller;
 
+import com.main.ProjetoFinal.model.AtribuirEntregadorRequestDTO;
 import com.main.ProjetoFinal.model.OperadorDTO;
 import com.main.ProjetoFinal.repository.OperadorRepository;
 import com.main.ProjetoFinal.service.EntregadorService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,12 +43,17 @@ public class OperadorController {
         return service.listarPedidos(token);
     }
 
-    // Cole dentro de qualquer @Controller que você já tem aberto no projeto
     @GetMapping("/atribuir-carga")
     public String carregarTelaAtribuirCarga(Model model) {
         model.addAttribute("listaPedidos", service.listarPedidosPendentes());
         model.addAttribute("listaEntregadores", entregadorService.listarEntregadores());
-        return "atribuir-carga"; // Nome do seu HTML
+        return "atribuir-carga"; 
+    }
+    
+    @PutMapping("/atribuir/entregador")
+    public OperadorDTO atribuirEntregador(@RequestBody AtribuirEntregadorRequestDTO dados){
+        OperadorDTO encomenda = service.atribuirEntregador(dados.getIdEncomenda(), dados.getIdEntregador());
+        return encomenda;
     }
 
 }
