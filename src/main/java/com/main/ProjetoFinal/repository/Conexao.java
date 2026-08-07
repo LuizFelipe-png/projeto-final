@@ -15,9 +15,9 @@ import java.sql.SQLException;
 public class Conexao {
     
     
-    private static final String url = "jdbc:mysql://localhost:3307/projeto_final";
+    private static final String url = "jdbc:mysql://localhost:3306/projeto_final";
     private static final String user = "root";
-    private static final String senha = "";
+    private static final String senha = "123456";
     private static Connection conn = null;
     
     public Conexao() {

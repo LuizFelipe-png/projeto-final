@@ -133,7 +133,7 @@ public class EntregadorRepository {
     public List<UsuarioDTO> listarEntregadores() {
         List<UsuarioDTO> lista = new ArrayList();
         try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement("select * from usuario where role = ?");) {
-            stmt.setString(1, "ENTREGADOR");
+            stmt.setString(1, "Entregador");
             try (ResultSet rs = stmt.executeQuery();) {
                 while (rs.next()) {
                     UsuarioDTO user = new UsuarioDTO();
