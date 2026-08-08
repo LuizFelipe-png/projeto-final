@@ -1,22 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.main.ProjetoFinal.service;
 
+import com.main.ProjetoFinal.model.EntregadorDTO;
 import com.main.ProjetoFinal.model.HistoricoDTO;
 import com.main.ProjetoFinal.model.OperadorDTO;
 import com.main.ProjetoFinal.model.UsuarioDTO;
 import com.main.ProjetoFinal.repository.EntregadorRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class EntregadorService {
-    
+
     @Autowired
     private EntregadorRepository repository;
 
@@ -39,6 +34,4 @@ public class EntregadorService {
     public List<UsuarioDTO> listarEntregadores() {
         return repository.listarEntregadores();
     }
-    
-    
 }

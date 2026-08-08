@@ -28,7 +28,7 @@ public class OperadorService {
     private UsuarioRepository usuarioRepository;
 
     public void cadastrarLote(String token, OperadorDTO operador) {
-    tokenService.extrairClaims(token);
+        tokenService.extrairClaims(token);
     
     String codigoGerado = GeradorDeCodigoUtil.geradorCodigo();
     operador.setCodigo(codigoGerado);
@@ -126,12 +126,10 @@ public class OperadorService {
     }
     
     public List<OperadorDTO> listarPedidosPendentes() {
-        // Ele vai no repositório buscar os pedidos que ainda não têm entregador
         return dao.listarPedidosPendentes(); 
     }
 
-    // Aproveitando, adicione também o método que vai salvar a vinculação no banco!
-    public void vincularEntregador(int idPedido, int idEntregador) {
-        dao.vincularEntregador(idPedido, idEntregador);
-    }
+    public boolean vincularEntregador(int idPedido, int idEntregador) {
+        return dao.vincularEntregador(idPedido, idEntregador);
+}
 }

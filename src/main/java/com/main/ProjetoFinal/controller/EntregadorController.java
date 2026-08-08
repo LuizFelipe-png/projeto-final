@@ -62,6 +62,6 @@ public class EntregadorController {
     public List<UsuarioDTO> listarEntregadores(@RequestHeader("Authorization") String auth) {
         String token = auth.replace("Bearer ", "");
         tokenService.extrairClaims(token);
-        return service.listarEntregadores();
+        return service.listarEntregadores(token);
     }
 }
