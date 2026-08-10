@@ -130,6 +130,14 @@ public class OperadorService {
     }
 
     public boolean vincularEntregador(int idPedido, int idEntregador) {
-        return dao.vincularEntregador(idPedido, idEntregador);
+
+    System.out.println(">>> SERVICE - ID PEDIDO: " + idPedido);
+    System.out.println(">>> SERVICE - ID ENTREGADOR: " + idEntregador);
+
+    boolean resultado = dao.vincularEntregador(idPedido, idEntregador);
+
+    System.out.println(">>> SERVICE - RESULTADO: " + resultado);
+
+    return resultado;
 }
 }

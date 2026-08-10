@@ -23,30 +23,36 @@ public class OperadorController {
     private EntregadorService entregadorService;
 
     @GetMapping("/enviar")
-    public String carregarTelaEnviar(Model model) {
-        model.addAttribute("listaPedidos", service.listarPedidosPendentes());
-        model.addAttribute("entregadores", entregadorService.listarEntregadores());
+    public String carregarTelaEnviar(Model model, @RequestHeader("Authorization") String auth) {
         return "enviar-entregas";
     }
 
     @PostMapping("/vincular")
-    public String vincularEntregador(@RequestParam("id_pedido") int idPedido,
-            @RequestParam("id_entregador") int idEntregador,
+    public String vincularEntregador(
+            @RequestParam("idEncomenda") int idPedido,
+            @RequestParam("idEntregador") int idEntregador,
             RedirectAttributes redirectAttributes) {
 
-        // 🔍 LINHAS DE DIAGNÓSTICO (Adicione aqui):
-        System.out.println("====================================");
-        System.out.println(">>> ID PEDIDO RECEBIDO DA TELA: " + idPedido);
-        System.out.println(">>> ID ENTREGADOR RECEBIDO DA TELA: " + idEntregador);
-        System.out.println("====================================");
+        System.out.println("========== VINCULAR ==========");
+        System.out.println("ID PEDIDO: " + idPedido);
+        System.out.println("ID ENTREGADOR: " + idEntregador);
 
         boolean sucesso = service.vincularEntregador(idPedido, idEntregador);
 
+        System.out.println("SUCESSO: " + sucesso);
+
         if (sucesso) {
-            redirectAttributes.addFlashAttribute("mensagemSucesso", "Entrega atribuída ao entregador com sucesso!");
+            redirectAttributes.addFlashAttribute(
+                    "mensagemSucesso",
+                    "Entrega atribuída ao entregador com sucesso!"
+            );
         } else {
-            redirectAttributes.addFlashAttribute("erroServidor", "Erro ao atribuir entregador.");
+            redirectAttributes.addFlashAttribute(
+                    "erroServidor",
+                    "Erro ao atribuir entregador."
+            );
         }
+
         return "redirect:/industria/enviar";
     }
 
@@ -71,5 +77,11 @@ public class OperadorController {
     @ResponseBody
     public OperadorDTO atribuirEntregador(@RequestBody AtribuirEntregadorRequestDTO dados) {
         return service.atribuirEntregador(dados.getIdEncomenda(), dados.getIdEntregador());
+    }
+
+    @GetMapping("/pendentes")
+    @ResponseBody
+    public List<OperadorDTO> listarPedidosPendentes() {
+        return service.listarPedidosPendentes();
     }
 }

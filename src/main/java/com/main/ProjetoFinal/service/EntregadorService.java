@@ -1,6 +1,5 @@
 package com.main.ProjetoFinal.service;
 
-import com.main.ProjetoFinal.model.EntregadorDTO;
 import com.main.ProjetoFinal.model.HistoricoDTO;
 import com.main.ProjetoFinal.model.OperadorDTO;
 import com.main.ProjetoFinal.model.UsuarioDTO;
@@ -8,6 +7,7 @@ import com.main.ProjetoFinal.repository.EntregadorRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Service
 public class EntregadorService {
@@ -31,7 +31,7 @@ public class EntregadorService {
         return repository.listarHistorico(idPedido);
     }
 
-    public List<UsuarioDTO> listarEntregadores() {
+    public List<UsuarioDTO> listarEntregadores(@RequestHeader("Authorization") String auth) {
         return repository.listarEntregadores();
     }
 }

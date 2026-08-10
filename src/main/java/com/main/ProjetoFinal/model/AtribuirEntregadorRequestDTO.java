@@ -10,32 +10,32 @@ package com.main.ProjetoFinal.model;
  */
 public class AtribuirEntregadorRequestDTO {
     
-    private int idEntregador;
-    private int idEncomenda;
+    private Integer idEntregador;
+    private Integer idEncomenda;
 
     public AtribuirEntregadorRequestDTO() {
     }
 
-    public AtribuirEntregadorRequestDTO(int idEntregador, int idEncomenda) {
+    public AtribuirEntregadorRequestDTO(Integer idEntregador, Integer idEncomenda) {
         this.idEntregador = idEntregador;
         this.idEncomenda = idEncomenda;
     }
 
-    public int getIdEntregador() {
+    public Integer getIdEntregador() {
         return idEntregador;
     }
 
-    public void setIdEntregador(int idEntregador) {
+    public void setIdEntregador(Integer idEntregador) {
         this.idEntregador = idEntregador;
     }
 
-    public int getIdEncomenda() {
+    public Integer getIdEncomenda() {
         return idEncomenda;
     }
 
-    public void setIdEncomenda(int idEncomenda) {
+    public void setIdEncomenda(Integer idEncomenda) {
         this.idEncomenda = idEncomenda;
     }
-    
+
     
 }
