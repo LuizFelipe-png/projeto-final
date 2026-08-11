@@ -67,22 +67,27 @@ public class UsuarioRepository {
     }
     
     public UsuarioDTO buscarIdUsuario(Integer id) {
-        UsuarioDTO cliente = null;
-        
-        try {
-            Connection conn = Conexao.conectar();
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM usuario WHERE id_usuario = ?");
-            stmt.setLong(1, id);
-            
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                cliente = new UsuarioDTO(); 
-                cliente.setId(rs.getLong("id_usuario"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    UsuarioDTO cliente = null;
+
+    try {
+        Connection conn = Conexao.conectar();
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM usuario WHERE id_usuario = ?");
+        stmt.setLong(1, id);
+
+        ResultSet rs = stmt.executeQuery();
+
+        if (rs.next()) {
+            cliente = new UsuarioDTO();
+            cliente.setId(rs.getLong("id_usuario"));
+            cliente.setNome(rs.getString("nome"));
+            cliente.setEmail(rs.getString("email"));
+            cliente.setTelefone(rs.getString("telefone"));
+            cliente.setSenha(rs.getString("senha"));
+            cliente.setRole(rs.getString("role"));
         }
-        return cliente;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return cliente;
+}
 }

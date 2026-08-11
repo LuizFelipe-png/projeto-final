@@ -148,27 +148,29 @@ public class OperadorRepository {
         return null;
     }
 
-    public OperadorDTO atribuirEncomenda(Integer idPedido, Integer idEntregador) {
-        try {
-            Connection conn = Conexao.conectar();
-            PreparedStatement stmt = conn.prepareStatement("UPDATE pedidos SET id_entregador = ? WHERE id_pedido = ?");
+    public OperadorDTO atribuirEncomenda(Integer idPedido, Integer idEntregador, String token) {
+    try {
+        Connection conn = Conexao.conectar();
+        PreparedStatement stmt = conn.prepareStatement(
+                "UPDATE pedidos SET id_entregador = ?, status = 'Em Rota', token = ? WHERE id_pedido = ?");
 
-            stmt.setInt(1, idEntregador);
-            stmt.setInt(2, idPedido);
+        stmt.setInt(1, idEntregador);
+        stmt.setString(2, token);
+        stmt.setInt(3, idPedido);
 
-            int linhasAfetadas = stmt.executeUpdate();
-            stmt.close();
-            conn.close();
+        int linhasAfetadas = stmt.executeUpdate();
+        stmt.close();
+        conn.close();
 
-            if (linhasAfetadas == 0) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao alterar o dado, tente novamente!");
-            }
-            return buscarPorId(idPedido);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (linhasAfetadas == 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao alterar o dado, tente novamente!");
         }
-        return null;
+        return buscarPorId(idPedido);
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return null;
+}
 
     public List<OperadorDTO> buscarPedidosPorEntregador(Integer idEntregador) {
         List<OperadorDTO> lista = new ArrayList<OperadorDTO>();
@@ -245,7 +247,6 @@ public class OperadorRepository {
         stmt.close();
         conn.close();
 
-        // --- LINHAS DE TESTE ---
         System.out.println(">>> ID PEDIDO RECEBIDO: " + idPedido);
         System.out.println(">>> ID ENTREGADOR RECEBIDO: " + idEntregador);
         System.out.println(">>> LINHAS ALTERADAS NO BANCO: " + linhasAfetadas);
@@ -255,5 +256,35 @@ public class OperadorRepository {
         e.printStackTrace();
     }
     return false;
+}
+    
+    public boolean entregadorOcupado(int idEntregador) {
+    String sql = "SELECT COUNT(*) FROM pedidos WHERE id_entregador = ? AND status != 'Entregue'";
+
+    try (Connection conn = Conexao.conectar();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        stmt.setInt(1, idEntregador);
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+    
+    public int atualizarStatus(int idPedido, String novoStatus) {
+    String sql = "UPDATE pedidos SET status = ? WHERE id_pedido = ?";
+    try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, novoStatus);
+        stmt.setInt(2, idPedido);
+        return stmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return 0;
 }
 }

@@ -128,25 +128,19 @@ public class EntregadorRepository {
     }
 
     public List<UsuarioDTO> listarEntregadores() {
-        List<UsuarioDTO> lista = new ArrayList<UsuarioDTO>();
-        try {
-            Connection conn = Conexao.conectar();
-            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM usuario WHERE UPPER(role) = 'ENTREGADOR'");
-            ResultSet rs = stmt.executeQuery();
+        List<UsuarioDTO> lista = new ArrayList<>();
+        String sql = "SELECT u.id_usuario, u.nome FROM usuario u "
+                + "WHERE u.role = 'Entregador' "
+                + "AND u.id_usuario NOT IN (SELECT id_entregador FROM pedidos WHERE id_entregador IS NOT NULL AND status != 'Entregue')";
+
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                UsuarioDTO user = new UsuarioDTO();
-                user.setId(rs.getLong("id_usuario"));
-                user.setNome(rs.getString("nome"));
-                user.setEmail(rs.getString("email"));
-                user.setTelefone(rs.getString("telefone"));
-                user.setSenha(rs.getString("senha"));
-                user.setRole(rs.getString("role"));
-                lista.add(user);
+                UsuarioDTO u = new UsuarioDTO();
+                u.setId(rs.getLong("id_usuario"));
+                u.setNome(rs.getString("nome"));
+                lista.add(u);
             }
-            rs.close();
-            stmt.close();
-            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

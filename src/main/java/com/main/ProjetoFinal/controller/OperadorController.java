@@ -25,36 +25,7 @@ public class OperadorController {
     @GetMapping("/enviar")
     public String carregarTelaEnviar(Model model, @RequestHeader("Authorization") String auth) {
         return "enviar-entregas";
-    }
-
-    @PostMapping("/vincular")
-    public String vincularEntregador(
-            @RequestParam("idEncomenda") int idPedido,
-            @RequestParam("idEntregador") int idEntregador,
-            RedirectAttributes redirectAttributes) {
-
-        System.out.println("========== VINCULAR ==========");
-        System.out.println("ID PEDIDO: " + idPedido);
-        System.out.println("ID ENTREGADOR: " + idEntregador);
-
-        boolean sucesso = service.vincularEntregador(idPedido, idEntregador);
-
-        System.out.println("SUCESSO: " + sucesso);
-
-        if (sucesso) {
-            redirectAttributes.addFlashAttribute(
-                    "mensagemSucesso",
-                    "Entrega atribuída ao entregador com sucesso!"
-            );
-        } else {
-            redirectAttributes.addFlashAttribute(
-                    "erroServidor",
-                    "Erro ao atribuir entregador."
-            );
-        }
-
-        return "redirect:/industria/enviar";
-    }
+    } 
 
     @GetMapping("/listar")
     @ResponseBody
@@ -84,4 +55,10 @@ public class OperadorController {
     public List<OperadorDTO> listarPedidosPendentes() {
         return service.listarPedidosPendentes();
     }
+    
+    @PostMapping("/atualizar-status")
+    public void atualizarStatus(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO operador) {
+        String token = auth.replace("Bearer ", "");
+        service.atualizarStatus(token, operador.getId_pedido(), operador.getStatus());
+}
 }
