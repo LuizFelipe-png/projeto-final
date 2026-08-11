@@ -20,19 +20,17 @@ public class IncidentesDTO {
     private String descricao;
     private String acao_tomada;
     private LocalDateTime data_ocorrencia;
-    private String codigo_pedido;
 
     public IncidentesDTO() {
     }
 
-    public IncidentesDTO(int id_incidente, Integer id_pedido, String tipo, String descricao, String acao_tomada, LocalDateTime data_ocorrencia, String codigo_pedido) {
+    public IncidentesDTO(int id_incidente, Integer id_pedido, String tipo, String descricao, String acao_tomada, LocalDateTime data_ocorrencia) {
         this.id_incidente = id_incidente;
         this.id_pedido = id_pedido;
         this.tipo = tipo;
         this.descricao = descricao;
         this.acao_tomada = acao_tomada;
         this.data_ocorrencia = data_ocorrencia;
-        this.codigo_pedido = codigo_pedido;
     }
 
     public int getId_incidente() {
@@ -82,14 +80,5 @@ public class IncidentesDTO {
     public void setData_ocorrencia(LocalDateTime data_ocorrencia) {
         this.data_ocorrencia = data_ocorrencia;
     }
-
-    public String getCodigo_pedido() {
-        return codigo_pedido;
-    }
-
-    public void setCodigo_pedido(String codigo_pedido) {
-        this.codigo_pedido = codigo_pedido;
-    }
-
     
 }

@@ -32,6 +32,8 @@ public class IncidenteRepository {
             stmt.setString(4, incidente.getAcao_tomada());
             stmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
             int resultado = stmt.executeUpdate();
+            System.out.println("aqui");
+            System.out.println(resultado);
             stmt.close();
 
             String novoStatus = incidente.getTipo().equals("Problema no Caminhão") ? "Incidente de Transporte" : "Avaria na Carga";
@@ -52,7 +54,7 @@ public class IncidenteRepository {
         List<IncidentesDTO> listar = new ArrayList<IncidentesDTO>();
         try {
             Connection conn = Conexao.conectar();
-            PreparedStatement stmt = conn.prepareStatement("SELECT i.*, p.codigo AS codigo_pedido FROM incidentes i, pedidos p WHERE i.id_pedido = p.id_pedido ORDER BY i.data_ocorrencia DESC");
+            PreparedStatement stmt = conn.prepareStatement("SELECT i.*, p.codigo FROM incidentes i, pedidos p WHERE i.id_pedido = p.id_pedido ORDER BY i.data_ocorrencia DESC");
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -63,7 +65,6 @@ public class IncidenteRepository {
                 incidente.setDescricao(rs.getString("descricao"));
                 incidente.setAcao_tomada(rs.getString("acao_tomada"));
                 incidente.setData_ocorrencia(rs.getTimestamp("data_ocorrencia").toLocalDateTime());
-                incidente.setCodigo_pedido(rs.getString("codigo_pedido"));
 
                 listar.add(incidente);
             }
