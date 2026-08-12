@@ -32,8 +32,6 @@ public class IncidenteRepository {
             stmt.setString(4, incidente.getAcao_tomada());
             stmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
             int resultado = stmt.executeUpdate();
-            System.out.println("aqui");
-            System.out.println(resultado);
             stmt.close();
 
             String novoStatus = incidente.getTipo().equals("Problema no Caminhão") ? "Incidente de Transporte" : "Avaria na Carga";

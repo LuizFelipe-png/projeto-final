@@ -132,6 +132,8 @@ public class OperadorService {
     }
 
     public void atualizarStatus(String token, int idPedido, String novoStatus, String localizacao) {
+        System.out.println("DEBUG ATUALIZAR STATUS -> ID: " + idPedido + " | Status: " + novoStatus + " | Loc: " + localizacao);
+        
         tokenService.extrairClaims(token);
 
         int linhas = dao.atualizarStatus(idPedido, novoStatus, localizacao);

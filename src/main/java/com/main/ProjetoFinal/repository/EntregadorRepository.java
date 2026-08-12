@@ -49,32 +49,33 @@ public class EntregadorRepository {
     }
 
     public boolean confirmarEntrega(int idPedido, String tokenDigitado) {
-        try {
-            Connection conn = Conexao.conectar();
-            PreparedStatement stmt = conn.prepareStatement("SELECT token FROM pedidos WHERE id_pedido = ? AND status = 'Em Rota'");
+        String sqlSelect = "SELECT token FROM pedidos WHERE id_pedido = ? AND status != 'Entregue'";
+        String sqlUpdate = "UPDATE pedidos SET status = 'Entregue' WHERE id_pedido = ?";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sqlSelect)) {
+
             stmt.setInt(1, idPedido);
-            ResultSet rs = stmt.executeQuery();
+            try (ResultSet rs = stmt.executeQuery()) {
 
-            if (rs.next()) {
-                String tokenReal = rs.getString("token");
-                if (tokenReal != null && tokenReal.equals(tokenDigitado)) {
-                    PreparedStatement update = conn.prepareStatement("UPDATE pedidos SET status = 'Entregue' WHERE id_pedido = ? AND status = 'Em Rota'");
-                    update.setInt(1, idPedido);
-                    boolean sucesso = update.executeUpdate() > 0;
-                    update.close();
+                if (rs.next()) {
+                    String tokenReal = rs.getString("token");
 
-                    if (sucesso) {
-                        registrarHistorico(conn, idPedido, "Entrega confirmada pelo entregador.");
+                    if (tokenReal != null && tokenDigitado != null
+                            && tokenReal.trim().equalsIgnoreCase(tokenDigitado.trim())) {
+
+                        try (PreparedStatement update = conn.prepareStatement(sqlUpdate)) {
+                            update.setInt(1, idPedido);
+                            boolean sucesso = update.executeUpdate() > 0;
+
+                            if (sucesso) {
+                                registrarHistorico(conn, idPedido, "Entrega confirmada pelo entregador.");
+                            }
+                            return sucesso;
+                        }
                     }
-                    rs.close();
-                    stmt.close();
-                    conn.close();
-                    return sucesso;
                 }
             }
-            rs.close();
-            stmt.close();
-            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

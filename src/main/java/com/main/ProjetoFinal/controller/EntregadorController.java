@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.main.ProjetoFinal.controller;
 
 import com.main.ProjetoFinal.model.HistoricoDTO;
@@ -11,7 +7,7 @@ import com.main.ProjetoFinal.service.EntregadorService;
 import com.main.ProjetoFinal.service.TokenService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -21,6 +17,7 @@ public class EntregadorController {
 
     @Autowired
     private TokenService tokenService;
+
     @Autowired
     private EntregadorService service;
 
@@ -33,21 +30,35 @@ public class EntregadorController {
 
     @PostMapping("/confirmar")
     public void confirmarEntrega(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO pedido) {
-        String token = auth.replace("Bearer ", "");
-        tokenService.extrairClaims(token);
-        boolean sucesso = service.confirmarEntrega(pedido.getId_pedido(), pedido.getToken());
+        String tokenHeader = auth.replace("Bearer ", "");
+        tokenService.extrairClaims(tokenHeader);
+
+        // Validação preventiva: evita enviar dados nulos ou vazios
+        if (pedido == null || pedido.getToken() == null || pedido.getToken().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token de confirmação não informado.");
+        }
+
+        // Passa o token sem espaços no início/fim (.trim())
+        boolean sucesso = service.confirmarEntrega(pedido.getId_pedido(), pedido.getToken().trim());
+
         if (!sucesso) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Token inválido.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token inválido.");
         }
     }
 
     @PostMapping("/checkpoint")
     public void registrarCheckpoint(@RequestHeader("Authorization") String auth, @RequestBody HistoricoDTO checkpoint) {
-        String token = auth.replace("Bearer ", "");
-        tokenService.extrairClaims(token);
-        boolean sucesso = service.registrarCheckpoint(checkpoint.getId_pedido(), checkpoint.getDescricao());
+        String tokenHeader = auth.replace("Bearer ", "");
+        tokenService.extrairClaims(tokenHeader);
+
+        if (checkpoint == null || checkpoint.getDescricao() == null || checkpoint.getDescricao().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Descrição do checkpoint é obrigatória.");
+        }
+
+        boolean sucesso = service.registrarCheckpoint(checkpoint.getId_pedido(), checkpoint.getDescricao().trim());
+
         if (!sucesso) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Erro ao registrar checkpoint.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao registrar checkpoint.");
         }
     }
 
@@ -74,5 +85,4 @@ public class EntregadorController {
     public List<HistoricoDTO> historicoGeral() {
         return service.listarTodoHistorico();
     }
-
 }

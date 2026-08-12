@@ -8,7 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
@@ -133,6 +132,10 @@ public class OperadorRepository {
                 pedido.setCodigo(rs.getString("codigo"));
                 pedido.setNome_cliente(rs.getString("nome_cliente"));
                 pedido.setEmail_cliente(rs.getString("email_cliente"));
+                pedido.setToken(rs.getString("token"));
+
+                long idEntregador = rs.getLong("id_entregador");
+                pedido.setId_entregador(rs.wasNull() ? null : idEntregador);
 
                 rs.close();
                 stmt.close();
@@ -270,12 +273,12 @@ public class OperadorRepository {
     }
 
     public int atualizarStatus(int idPedido, String novoStatus, String localizacao) {
-        String sql = "UPDATE pedidos SET status = COALESCE(?, status), localizacao_atual = COALESCE(?, localizacao_atual) WHERE id_pedido = ?";
+        // QUERY CORRIGIDA: Removida a referência à coluna 'localizacao_atual' que não existe no MySQL
+        String sql = "UPDATE pedidos SET status = COALESCE(?, status) WHERE id_pedido = ?";
         try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, novoStatus);
-            stmt.setString(2, localizacao);
-            stmt.setInt(3, idPedido);
+            stmt.setInt(2, idPedido);
 
             return stmt.executeUpdate();
         } catch (SQLException e) {
