@@ -20,17 +20,19 @@ public class IncidentesDTO {
     private String descricao;
     private String acao_tomada;
     private LocalDateTime data_ocorrencia;
+    private String nome_entregador;
 
     public IncidentesDTO() {
     }
 
-    public IncidentesDTO(int id_incidente, Integer id_pedido, String tipo, String descricao, String acao_tomada, LocalDateTime data_ocorrencia) {
+    public IncidentesDTO(int id_incidente, Integer id_pedido, String tipo, String descricao, String acao_tomada, LocalDateTime data_ocorrencia, String nome_entregador) {
         this.id_incidente = id_incidente;
         this.id_pedido = id_pedido;
         this.tipo = tipo;
         this.descricao = descricao;
         this.acao_tomada = acao_tomada;
         this.data_ocorrencia = data_ocorrencia;
+        this.nome_entregador = nome_entregador;
     }
 
     public int getId_incidente() {
@@ -80,5 +82,14 @@ public class IncidentesDTO {
     public void setData_ocorrencia(LocalDateTime data_ocorrencia) {
         this.data_ocorrencia = data_ocorrencia;
     }
+
+    public String getNome_entregador() {
+        return nome_entregador;
+    }
+
+    public void setNome_entregador(String nome_entregador) {
+        this.nome_entregador = nome_entregador;
+    }
+
     
 }

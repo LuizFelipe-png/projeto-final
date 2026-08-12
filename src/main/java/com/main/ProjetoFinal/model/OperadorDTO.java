@@ -24,11 +24,12 @@ public class OperadorDTO {
     private String emailCliente;
     private String codigo_pin;
     private Integer tentativas_pin;
+    private String localizacao_atual;
 
     public OperadorDTO() {
     }
 
-    public OperadorDTO(int id_pedido, String nome_pedido, float peso, int quantidade, String status, String codigo, int id_cliente, String nome_cliente, String email_cliente, Long id_entregador, String token, String emailCliente, String codigo_pin, Integer tentativas_pin) {
+    public OperadorDTO(int id_pedido, String nome_pedido, float peso, int quantidade, String status, String codigo, int id_cliente, String nome_cliente, String email_cliente, Long id_entregador, String token, String emailCliente, String codigo_pin, Integer tentativas_pin, String localizacao_atual) {
         this.id_pedido = id_pedido;
         this.nome_pedido = nome_pedido;
         this.peso = peso;
@@ -43,6 +44,7 @@ public class OperadorDTO {
         this.emailCliente = emailCliente;
         this.codigo_pin = codigo_pin;
         this.tentativas_pin = tentativas_pin;
+        this.localizacao_atual = localizacao_atual;
     }
 
     public int getId_pedido() {
@@ -155,6 +157,14 @@ public class OperadorDTO {
 
     public void setTentativas_pin(Integer tentativas_pin) {
         this.tentativas_pin = tentativas_pin;
+    }
+
+    public String getLocalizacao_atual() {
+        return localizacao_atual;
+    }
+
+    public void setLocalizacao_atual(String localizacao_atual) {
+        this.localizacao_atual = localizacao_atual;
     }
 
     

@@ -61,4 +61,10 @@ public class OperadorController {
         String token = auth.replace("Bearer ", "");
         service.atualizarStatus(token, operador.getId_pedido(), operador.getStatus());
 }
+    
+    @PostMapping("/bater-ponto")
+    public void baterPonto(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO operador) {
+        String token = auth.replace("Bearer ", "");
+        service.baterPonto(token, operador.getId_pedido(), operador.getLocalizacao_atual());
+}
 }

@@ -129,12 +129,9 @@ public class EntregadorRepository {
 
     public List<UsuarioDTO> listarEntregadores() {
         List<UsuarioDTO> lista = new ArrayList<>();
-        String sql = "SELECT u.id_usuario, u.nome FROM usuario u "
-                + "WHERE u.role = 'Entregador' "
-                + "AND u.id_usuario NOT IN (SELECT id_entregador FROM pedidos WHERE id_entregador IS NOT NULL AND status != 'Entregue')";
+        String sql = "SELECT id_usuario, nome FROM usuario WHERE role = 'Entregador'";
 
         try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-
             while (rs.next()) {
                 UsuarioDTO u = new UsuarioDTO();
                 u.setId(rs.getLong("id_usuario"));

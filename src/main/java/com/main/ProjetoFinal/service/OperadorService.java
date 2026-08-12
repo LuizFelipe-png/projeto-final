@@ -89,42 +89,26 @@ public class OperadorService {
     }
 
     public OperadorDTO atribuirEntregador(Integer idEncomenda, Integer idEntregador) {
-    if (idEncomenda == null) {
-        throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Encomenda inválida, tente novamente!");
-    }
-    if (idEntregador == null) {
-        throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Entregador inválido, tente novamente!");
-    }
-    UsuarioDTO entregador = usuarioRepository.buscarIdUsuario(idEntregador);
-    if (!entregador.getRole().equals("Entregador")) {
-        throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Esse id não é de um entregador, tente novamente!");
-    }
-    if (dao.entregadorOcupado(idEntregador)) {
-        throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Esse entregador já possui uma encomenda em andamento.");
-    }
-
-    String tokenEntrega = GeradorDeCodigoUtil.geradorCodigo();
-    OperadorDTO pedido = dao.atribuirEncomenda(idEncomenda, idEntregador, tokenEntrega);
-
-    if (pedido != null && pedido.getEmail_cliente() != null && !pedido.getEmail_cliente().isBlank()) {
-        try {
-            String htmlDespacho = "<h2>Seu pedido está a caminho!</h2>"
-                    + "<p>Olá, " + pedido.getNome_cliente() + "!</p>"
-                    + "<p>Seu pedido de código <b>" + pedido.getCodigo() + "</b> saiu para entrega.</p>"
-                    + "<p>Quando o entregador chegar, informe este token de segurança para validar o recebimento: <strong>"
-                    + tokenEntrega + "</strong></p>";
-            emailService.enviarEmailSmtp(
-                    pedido.getEmail_cliente(),
-                    "Seu pedido saiu para entrega!",
-                    htmlDespacho
-            );
-        } catch (Exception e) {
-            System.err.println("Erro ao enviar e-mail de despacho: " + e.getMessage());
+        if (idEncomenda == null) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Encomenda inválida, tente novamente!");
         }
-    }
+        if (idEntregador == null) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(400), "Entregador inválido, tente novamente!");
+        }
+        UsuarioDTO entregador = usuarioRepository.buscarIdUsuario(idEntregador);
+        if (!entregador.getRole().equals("Entregador")) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Esse id não é de um entregador, tente novamente!");
+        }
 
-    return pedido;
-}
+        String tokenEntrega = GeradorDeCodigoUtil.geradorCodigo();
+        OperadorDTO pedido = dao.atribuirEncomenda(idEncomenda, idEntregador, tokenEntrega);
+
+        if (pedido != null && pedido.getEmail_cliente() != null && !pedido.getEmail_cliente().isBlank()) {
+            emailService.enviarTokenEntrega(pedido.getEmail_cliente(), pedido.getCodigo(), tokenEntrega);
+        }
+
+        return pedido;
+    }
 
     public List<OperadorDTO> buscarEncomendaPorEntregador(Integer idEntregador) {
         if (idEntregador == null) {
@@ -152,12 +136,20 @@ public class OperadorService {
 
         return resultado;
     }
-    
+
     public void atualizarStatus(String token, int idPedido, String novoStatus) {
         tokenService.extrairClaims(token);
         int linhas = dao.atualizarStatus(idPedido, novoStatus);
         if (linhas == 0) {
             throw new RuntimeException("Erro ao atualizar status.");
         }
-}
+    }
+
+    public void baterPonto(String token, int idPedido, String localizacao) {
+        tokenService.extrairClaims(token);
+        int linhas = dao.baterPonto(idPedido, localizacao);
+        if (linhas == 0) {
+            throw new RuntimeException("Erro ao registrar localização.");
+        }
+    }
 }

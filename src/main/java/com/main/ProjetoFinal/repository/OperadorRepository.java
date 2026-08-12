@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -148,28 +149,21 @@ public class OperadorRepository {
         return null;
     }
 
-    public OperadorDTO atribuirEncomenda(Integer idPedido, Integer idEntregador, String token) {
-    try {
-        Connection conn = Conexao.conectar();
-        PreparedStatement stmt = conn.prepareStatement(
-                "UPDATE pedidos SET id_entregador = ?, status = 'Em Rota', token = ? WHERE id_pedido = ?");
-
+    public OperadorDTO atribuirEncomenda(Integer idPedido, Integer idEntregador, String tokenEntrega) {
+    try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(
+            "UPDATE pedidos SET id_entregador = ?, token = ?, status = 'Em Rota' WHERE id_pedido = ?")) {
         stmt.setInt(1, idEntregador);
-        stmt.setString(2, token);
+        stmt.setString(2, tokenEntrega);
         stmt.setInt(3, idPedido);
-
         int linhasAfetadas = stmt.executeUpdate();
-        stmt.close();
-        conn.close();
-
         if (linhasAfetadas == 0) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao alterar o dado, tente novamente!");
+            throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Erro ao alterar o dado, tente novamente!");
         }
         return buscarPorId(idPedido);
     } catch (SQLException e) {
         e.printStackTrace();
+        return null;
     }
-    return null;
 }
 
     public List<OperadorDTO> buscarPedidosPorEntregador(Integer idEntregador) {
@@ -280,6 +274,18 @@ public class OperadorRepository {
     String sql = "UPDATE pedidos SET status = ? WHERE id_pedido = ?";
     try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
         stmt.setString(1, novoStatus);
+        stmt.setInt(2, idPedido);
+        return stmt.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return 0;
+}
+    
+    public int baterPonto(int idPedido, String localizacao) {
+    String sql = "UPDATE pedidos SET localizacao_atual = ? WHERE id_pedido = ?";
+    try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, localizacao);
         stmt.setInt(2, idPedido);
         return stmt.executeUpdate();
     } catch (SQLException e) {

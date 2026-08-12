@@ -43,31 +43,6 @@ INSERT INTO `cliente` VALUES (1,'João da Silva','joao@email.com'),(2,'Maria Sou
 UNLOCK TABLES;
 
 --
--- Table structure for table `entregador`
---
-
-DROP TABLE IF EXISTS `entregador`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `entregador` (
-  `id_entregador` int(11) NOT NULL,
-  `veiculo` varchar(100) DEFAULT NULL,
-  `placa` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`id_entregador`),
-  CONSTRAINT `entregador_ibfk_1` FOREIGN KEY (`id_entregador`) REFERENCES `usuario` (`id_usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `entregador`
---
-
-LOCK TABLES `entregador` WRITE;
-/*!40000 ALTER TABLE `entregador` DISABLE KEYS */;
-/*!40000 ALTER TABLE `entregador` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `historico_pedido`
 --
 
@@ -135,15 +110,18 @@ CREATE TABLE `pedidos` (
   `nome_pedido` varchar(200) NOT NULL,
   `peso` float NOT NULL,
   `quantidade` int(11) NOT NULL,
-  `status` enum('Pedido Solicitado','Em Produção','Disponivel para Despacho','Em Rota','Entregue') NOT NULL,
+  `status` enum('Pedido Solicitado','Em Produção','Disponivel para Despacho','Em Rota','Entregue','Avaria na Carga','Incidente de Transporte') NOT NULL,
   `codigo` varchar(890) NOT NULL,
   `id_cliente` int(11) DEFAULT NULL,
   `id_entregador` int(11) DEFAULT NULL,
   `token` varchar(10) DEFAULT NULL,
+  `localizacao_atual` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id_pedido`),
-  KEY `fk_pedidos_entregador` (`id_entregador`),
-  CONSTRAINT `fk_pedidos_entregador` FOREIGN KEY (`id_entregador`) REFERENCES `entregador` (`id_entregador`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  KEY `id_cliente` (`id_cliente`),
+  KEY `id_entregador` (`id_entregador`),
+  CONSTRAINT `pedidos_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
+  CONSTRAINT `pedidos_ibfk_2` FOREIGN KEY (`id_entregador`) REFERENCES `usuario` (`id_usuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -152,7 +130,7 @@ CREATE TABLE `pedidos` (
 
 LOCK TABLES `pedidos` WRITE;
 /*!40000 ALTER TABLE `pedidos` DISABLE KEYS */;
-INSERT INTO `pedidos` VALUES (1,'Bolas de Futebol',5.5,10,'Pedido Solicitado','COD-0007',1,NULL,NULL),(2,'Chuteiras Nike',3.2,6,'Em Produção','COD-0008',2,NULL,NULL),(3,'Camisas de Time',2.1,20,'Disponivel para Despacho','COD-0009',3,NULL,NULL);
+INSERT INTO `pedidos` VALUES (1,'Bolas de Futebol',5.5,10,'Pedido Solicitado','COD-0007',1,NULL,NULL,NULL),(2,'Chuteiras Nike',3.2,6,'Em Produção','COD-0008',2,NULL,NULL,NULL),(3,'Camisas de Time',2.1,20,'Disponivel para Despacho','COD-0009',3,NULL,NULL,NULL),(4,'Televisao Smart 50',12.5,2,'Disponivel para Despacho','COD-0010',1,NULL,NULL,NULL),(5,'Notebook Dell',3.2,5,'Disponivel para Despacho','COD-0011',2,NULL,NULL,NULL),(6,'Celulares Samsung',4.8,10,'Disponivel para Despacho','COD-0012',3,NULL,NULL,NULL),(7,'Geladeira Brastemp',65,1,'Disponivel para Despacho','COD-0013',1,NULL,NULL,NULL),(8,'Caixas de Ferramentas',18.5,4,'Disponivel para Despacho','COD-0014',2,NULL,NULL,NULL),(9,'Monitores Gamer',15,6,'Disponivel para Despacho','COD-0015',3,NULL,NULL,NULL),(10,'Impressoras',22.3,3,'Disponivel para Despacho','COD-0016',1,NULL,NULL,NULL),(11,'Fones de Ouvido',2.1,15,'Disponivel para Despacho','COD-0017',2,NULL,NULL,NULL),(12,'Ar Condicionado',35.7,2,'Disponivel para Despacho','COD-0018',3,NULL,NULL,NULL),(13,'Mesas de Escritorio',42,3,'Entregue','COD-0019',1,7,'0IQ5W',NULL);
 /*!40000 ALTER TABLE `pedidos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -171,7 +149,7 @@ CREATE TABLE `usuario` (
   `senha` varchar(90) NOT NULL,
   `role` varchar(50) NOT NULL,
   PRIMARY KEY (`id_usuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -180,7 +158,7 @@ CREATE TABLE `usuario` (
 
 LOCK TABLES `usuario` WRITE;
 /*!40000 ALTER TABLE `usuario` DISABLE KEYS */;
-INSERT INTO `usuario` VALUES (1,'operador','operador@gmail.com','43991087749','123','Operador Logistico');
+INSERT INTO `usuario` VALUES (1,'Carlos Motorista','carlos@entregas.com','11999999999','123456','Entregador'),(2,'Marcos Silva','marcos@gmail.com','11987654321','123','Entregador'),(3,'Ana Souza','ana@gmail.com','11981234567','123','Entregador'),(4,'Fernanda Oliveira','fernanda@gmail.com','43999887766','123','Operador Logistico'),(5,'Ricardo Santos','ricardo@gmail.com','43988776655','123','Entregador'),(6,'Juliana Costa','juliana@gmail.com','11995554433','123','Operador Logistico'),(7,'Pedro Almeida','pedro@gmail.com','43991112222','123','Entregador');
 /*!40000 ALTER TABLE `usuario` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -193,4 +171,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-03 18:15:23
+-- Dump completed on 2026-08-11 21:18:47
