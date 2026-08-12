@@ -64,4 +64,15 @@ public class EntregadorController {
         tokenService.extrairClaims(token);
         return service.listarEntregadores(token);
     }
+
+    @GetMapping("/historico-publico/{idPedido}")
+    public List<HistoricoDTO> historicoPublico(@PathVariable int idPedido) {
+        return service.listarHistorico(idPedido);
+    }
+
+    @GetMapping("/historico-geral")
+    public List<HistoricoDTO> historicoGeral() {
+        return service.listarTodoHistorico();
+    }
+
 }

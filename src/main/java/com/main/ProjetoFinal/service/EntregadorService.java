@@ -34,4 +34,8 @@ public class EntregadorService {
     public List<UsuarioDTO> listarEntregadores(@RequestHeader("Authorization") String auth) {
         return repository.listarEntregadores();
     }
+
+    public List<HistoricoDTO> listarTodoHistorico() {
+        return repository.listarTodoHistorico();
+    }
 }

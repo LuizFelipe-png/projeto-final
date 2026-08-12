@@ -5,10 +5,10 @@ import com.main.ProjetoFinal.model.OperadorDTO;
 import com.main.ProjetoFinal.service.EntregadorService;
 import com.main.ProjetoFinal.service.OperadorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class OperadorController {
     @GetMapping("/enviar")
     public String carregarTelaEnviar(Model model, @RequestHeader("Authorization") String auth) {
         return "enviar-entregas";
-    } 
+    }
 
     @GetMapping("/listar")
     @ResponseBody
@@ -55,16 +55,22 @@ public class OperadorController {
     public List<OperadorDTO> listarPedidosPendentes() {
         return service.listarPedidosPendentes();
     }
-    
-    @PostMapping("/atualizar-status")
-    public void atualizarStatus(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO operador) {
+
+    @PostMapping("/status/atualizar")
+    @ResponseBody
+    public ResponseEntity<String> atualizarStatus(@RequestHeader("Authorization") String auth,
+            @RequestParam(name = "id_pedido") int idPedido, @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "localizacao", required = false) String localizacao) {
+
         String token = auth.replace("Bearer ", "");
-        service.atualizarStatus(token, operador.getId_pedido(), operador.getStatus());
-}
-    
-    @PostMapping("/bater-ponto")
-    public void baterPonto(@RequestHeader("Authorization") String auth, @RequestBody OperadorDTO operador) {
-        String token = auth.replace("Bearer ", "");
-        service.baterPonto(token, operador.getId_pedido(), operador.getLocalizacao_atual());
-}
+        service.atualizarStatus(token, idPedido, status, localizacao);
+
+        return ResponseEntity.ok("Status e localização atualizados com sucesso!");
+    }
+
+    @GetMapping("/rastrear/{codigo}")
+    @ResponseBody
+    public OperadorDTO rastrear(@PathVariable String codigo) {
+        return service.buscarPorCodigo(codigo);
+    }
 }

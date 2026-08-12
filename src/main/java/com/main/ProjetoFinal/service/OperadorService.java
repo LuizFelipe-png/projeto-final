@@ -41,7 +41,7 @@ public class OperadorService {
             try {
                 String htmlCadastro = "<h2>Olá, " + operador.getNome_cliente() + "!</h2>"
                         + "<p>Seu pedido de <b>" + operador.getNome_pedido() + "</b> foi recebido pela nossa indústria.</p>"
-                        + "<p>Código do lote: <b>" + codigoGerado + "</b></p>";
+                        + "<p>Código de rastreamento: <b>" + codigoGerado + "</b></p>";
                 emailService.enviarEmailSmtp(
                         operador.getEmail_cliente(),
                         "Pedido Recebido — Lote " + codigoGerado,
@@ -127,29 +127,21 @@ public class OperadorService {
     }
 
     public boolean vincularEntregador(int idPedido, int idEntregador) {
-        System.out.println(">>> SERVICE - ID PEDIDO: " + idPedido);
-        System.out.println(">>> SERVICE - ID ENTREGADOR: " + idEntregador);
-
         boolean resultado = dao.vincularEntregador(idPedido, idEntregador);
-
-        System.out.println(">>> SERVICE - RESULTADO: " + resultado);
-
         return resultado;
     }
 
-    public void atualizarStatus(String token, int idPedido, String novoStatus) {
+    public void atualizarStatus(String token, int idPedido, String novoStatus, String localizacao) {
         tokenService.extrairClaims(token);
-        int linhas = dao.atualizarStatus(idPedido, novoStatus);
+
+        int linhas = dao.atualizarStatus(idPedido, novoStatus, localizacao);
+
         if (linhas == 0) {
             throw new RuntimeException("Erro ao atualizar status.");
         }
     }
 
-    public void baterPonto(String token, int idPedido, String localizacao) {
-        tokenService.extrairClaims(token);
-        int linhas = dao.baterPonto(idPedido, localizacao);
-        if (linhas == 0) {
-            throw new RuntimeException("Erro ao registrar localização.");
-        }
+    public OperadorDTO buscarPorCodigo(String codigo) {
+        return dao.buscarPorCodigo(codigo);
     }
 }

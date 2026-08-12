@@ -19,7 +19,7 @@ public class GeradorDeCodigoUtil {
         StringBuilder codigoRastreio = new StringBuilder();
         String caracteresValidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             int indiceSorteado = random.nextInt(caracteresValidos.length());
             char caracterSorteado = caracteresValidos.charAt(indiceSorteado);
             codigoRastreio.append(caracterSorteado);

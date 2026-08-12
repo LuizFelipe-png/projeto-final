@@ -174,4 +174,22 @@ public class EntregadorRepository {
         }
         throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Usuário não encontrado!");
     }
+
+    public List<HistoricoDTO> listarTodoHistorico() {
+        List<HistoricoDTO> lista = new ArrayList<>();
+        String sql = "SELECT * FROM historico_pedido ORDER BY data_hora DESC";
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                HistoricoDTO h = new HistoricoDTO();
+                h.setId_historico(rs.getInt("id_historico"));
+                h.setId_pedido(rs.getInt("id_pedido"));
+                h.setDescricao(rs.getString("descricao"));
+                h.setData_hora(rs.getTimestamp("data_hora").toLocalDateTime());
+                lista.add(h);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
+    }
 }

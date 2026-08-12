@@ -150,21 +150,21 @@ public class OperadorRepository {
     }
 
     public OperadorDTO atribuirEncomenda(Integer idPedido, Integer idEntregador, String tokenEntrega) {
-    try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(
-            "UPDATE pedidos SET id_entregador = ?, token = ?, status = 'Em Rota' WHERE id_pedido = ?")) {
-        stmt.setInt(1, idEntregador);
-        stmt.setString(2, tokenEntrega);
-        stmt.setInt(3, idPedido);
-        int linhasAfetadas = stmt.executeUpdate();
-        if (linhasAfetadas == 0) {
-            throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Erro ao alterar o dado, tente novamente!");
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(
+                "UPDATE pedidos SET id_entregador = ?, token = ?, status = 'Em Rota' WHERE id_pedido = ?")) {
+            stmt.setInt(1, idEntregador);
+            stmt.setString(2, tokenEntrega);
+            stmt.setInt(3, idPedido);
+            int linhasAfetadas = stmt.executeUpdate();
+            if (linhasAfetadas == 0) {
+                throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Erro ao alterar o dado, tente novamente!");
+            }
+            return buscarPorId(idPedido);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
-        return buscarPorId(idPedido);
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return null;
     }
-}
 
     public List<OperadorDTO> buscarPedidosPorEntregador(Integer idEntregador) {
         List<OperadorDTO> lista = new ArrayList<OperadorDTO>();
@@ -230,67 +230,88 @@ public class OperadorRepository {
     }
 
     public boolean vincularEntregador(int idPedido, int idEntregador) {
-    try {
-        Connection conn = Conexao.conectar();
-        PreparedStatement stmt = conn.prepareStatement("UPDATE pedidos SET id_entregador = ?, status = 'Em Rota' WHERE id_pedido = ?");
+        try {
+            Connection conn = Conexao.conectar();
+            PreparedStatement stmt = conn.prepareStatement("UPDATE pedidos SET id_entregador = ?, status = 'Em Rota' WHERE id_pedido = ?");
 
-        stmt.setInt(1, idEntregador);
-        stmt.setInt(2, idPedido);
+            stmt.setInt(1, idEntregador);
+            stmt.setInt(2, idPedido);
 
-        int linhasAfetadas = stmt.executeUpdate();
-        stmt.close();
-        conn.close();
+            int linhasAfetadas = stmt.executeUpdate();
+            stmt.close();
+            conn.close();
 
-        System.out.println(">>> ID PEDIDO RECEBIDO: " + idPedido);
-        System.out.println(">>> ID ENTREGADOR RECEBIDO: " + idEntregador);
-        System.out.println(">>> LINHAS ALTERADAS NO BANCO: " + linhasAfetadas);
+            System.out.println(">>> ID PEDIDO RECEBIDO: " + idPedido);
+            System.out.println(">>> ID ENTREGADOR RECEBIDO: " + idEntregador);
+            System.out.println(">>> LINHAS ALTERADAS NO BANCO: " + linhasAfetadas);
 
-        return linhasAfetadas > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return false;
-}
-    
-    public boolean entregadorOcupado(int idEntregador) {
-    String sql = "SELECT COUNT(*) FROM pedidos WHERE id_entregador = ? AND status != 'Entregue'";
-
-    try (Connection conn = Conexao.conectar();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-        stmt.setInt(1, idEntregador);
-        try (ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
+            return linhasAfetadas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return false;
     }
-    return false;
-}
-    
-    public int atualizarStatus(int idPedido, String novoStatus) {
-    String sql = "UPDATE pedidos SET status = ? WHERE id_pedido = ?";
-    try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-        stmt.setString(1, novoStatus);
-        stmt.setInt(2, idPedido);
-        return stmt.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+    public boolean entregadorOcupado(int idEntregador) {
+        String sql = "SELECT COUNT(*) FROM pedidos WHERE id_entregador = ? AND status != 'Entregue'";
+
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idEntregador);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
-    return 0;
-}
-    
-    public int baterPonto(int idPedido, String localizacao) {
-    String sql = "UPDATE pedidos SET localizacao_atual = ? WHERE id_pedido = ?";
-    try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-        stmt.setString(1, localizacao);
-        stmt.setInt(2, idPedido);
-        return stmt.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
+
+    public int atualizarStatus(int idPedido, String novoStatus, String localizacao) {
+        String sql = "UPDATE pedidos SET status = COALESCE(?, status), localizacao_atual = COALESCE(?, localizacao_atual) WHERE id_pedido = ?";
+        try (Connection conn = Conexao.conectar(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, novoStatus);
+            stmt.setString(2, localizacao);
+            stmt.setInt(3, idPedido);
+
+            return stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
-    return 0;
-}
+
+    public OperadorDTO buscarPorCodigo(String codigo) {
+        try {
+            Connection conn = Conexao.conectar();
+            PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT p.*, c.nome AS nome_cliente, c.email AS email_cliente "
+                    + "FROM pedidos p LEFT JOIN cliente c ON p.id_cliente = c.id_cliente "
+                    + "WHERE p.codigo = ?");
+            stmt.setString(1, codigo);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                OperadorDTO pedido = new OperadorDTO();
+                pedido.setId_pedido(rs.getInt("id_pedido"));
+                pedido.setNome_pedido(rs.getString("nome_pedido"));
+                pedido.setStatus(rs.getString("status"));
+                pedido.setCodigo(rs.getString("codigo"));
+                pedido.setNome_cliente(rs.getString("nome_cliente"));
+                rs.close();
+                stmt.close();
+                conn.close();
+                return pedido;
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
